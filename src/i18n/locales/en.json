@@ -9,7 +9,8 @@
     "profile": "Profile",
     "settings": "Settings",
     "signOut": "Sign out",
-    "login": "Log in"
+    "login": "Log in",
+    "walletLogin": "Wallet Login"
   },
   "theme": {
     "light": "Light",

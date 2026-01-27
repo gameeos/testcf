@@ -116,8 +116,8 @@ export function ChallengeNewPage() {
     return (
       <PageLayout>
         <EmptyState
-          title="决议不存在"
-          description="请从决议详情页发起争议"
+          title="提案不存在"
+          description="请从提案详情页申请仲裁"
           action={
             <Button variant="outline" onClick={() => navigate('/resolutions')}>
               返回列表
@@ -133,7 +133,7 @@ export function ChallengeNewPage() {
       <PageLayout>
         <EmptyState
           title="挑战窗口已关闭"
-          description="该决议已超过挑战期限，无法发起争议"
+          description="该提案已超过挑战期限，无法申请仲裁"
           action={
             <Button
               variant="outline"
@@ -172,9 +172,9 @@ export function ChallengeNewPage() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold text-foreground">发起争议</h1>
+            <h1 className="text-xl font-bold text-foreground">申请仲裁</h1>
             <p className="text-sm text-muted-foreground">
-              对 Resolution #{resolutionId} 提出争议
+              对 Resolution #{resolutionId} 申请仲裁
             </p>
           </div>
         </div>
@@ -228,16 +228,16 @@ export function ChallengeNewPage() {
           </CardContent>
         </Card>
 
-        {/* 争议表单 */}
+        {/* 仲裁表单 */}
         <Card className="bg-card/50">
           <CardHeader>
-            <CardTitle className="text-base">争议内容</CardTitle>
-            <CardDescription>填写您的争议理由和证据材料</CardDescription>
+            <CardTitle className="text-base">仲裁申请内容</CardTitle>
+            <CardDescription>填写您的仲裁理由和证据材料</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* 争议类型 */}
+            {/* 仲裁类型 */}
             <div className="space-y-3">
-              <Label>争议类型</Label>
+              <Label>仲裁类型</Label>
               <RadioGroup
                 value={disputeType}
                 onValueChange={(value) => setDisputeType(value as DisputeType)}
@@ -286,14 +286,14 @@ export function ChallengeNewPage() {
 
             <Separator />
 
-            {/* 争议理由 */}
+            {/* 仲裁理由 */}
             <div className="space-y-3">
               <Label htmlFor="reason">
-                争议理由 <span className="text-red-400">*</span>
+                仲裁理由 <span className="text-red-400">*</span>
               </Label>
               <Textarea
                 id="reason"
-                placeholder="请详细说明您的争议理由..."
+                placeholder="请详细说明您的仲裁理由..."
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 className="min-h-[120px]"
@@ -405,7 +405,7 @@ export function ChallengeNewPage() {
             取消
           </Button>
           <Button onClick={handleSubmit} disabled={!isValid}>
-            提交争议
+            提交申请
           </Button>
         </div>
 
@@ -413,8 +413,8 @@ export function ChallengeNewPage() {
         <ConfirmDialog
           open={showConfirm}
           onOpenChange={setShowConfirm}
-          title="确认提交争议"
-          description="您将质押 500 USDT 发起此争议。如果争议被驳回，押金将被没收。确定要继续吗？"
+          title="确认提交仲裁申请"
+          description="您将质押 500 USDT 提交此仲裁申请。如果仲裁结果不支持您的主张，押金将被没收。确定要继续吗？"
           confirmText="确认提交"
           onConfirm={handleConfirm}
         />
@@ -423,8 +423,8 @@ export function ChallengeNewPage() {
         <ConfirmDialog
           open={showSuccess}
           onOpenChange={handleSuccessClose}
-          title="争议提交成功"
-          description="您的争议已成功提交，仲裁委员会将在24小时内进行裁决。"
+          title="仲裁申请提交成功"
+          description="您的仲裁申请已成功提交，仲裁委员会将进行裁决。"
           confirmText="查看详情"
           cancelText=""
           onConfirm={handleSuccessClose}

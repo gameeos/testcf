@@ -23,9 +23,9 @@ export function ResolutionsPage() {
       <div className="space-y-6">
         {/* 页面标题 */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">决议列表</h1>
+          <h1 className="text-2xl font-bold text-foreground">提案列表</h1>
           <p className="mt-1 text-muted-foreground">
-            查看所有市场决议，在挑战窗口期内可对结果发起争议
+            查看所有市场结算提案，在挑战期内可申请仲裁
           </p>
         </div>
 
@@ -36,14 +36,14 @@ export function ResolutionsPage() {
         >
           <TabsList className="bg-card/50">
             <TabsTrigger value="all">全部</TabsTrigger>
-            <TabsTrigger value="Proposed">待挑战</TabsTrigger>
+            <TabsTrigger value="Proposed">挑战期</TabsTrigger>
             <TabsTrigger value="Challenged">仲裁中</TabsTrigger>
-            <TabsTrigger value="Resolved">已决议</TabsTrigger>
+            <TabsTrigger value="Resolved">已结算</TabsTrigger>
             <TabsTrigger value="Invalid">已作废</TabsTrigger>
           </TabsList>
         </Tabs>
 
-        {/* 决议列表 */}
+        {/* 提案列表 */}
         {filteredResolutions.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredResolutions.map((resolution) => (
@@ -53,8 +53,8 @@ export function ResolutionsPage() {
         ) : (
           <EmptyState
             icon={<FileSearch className="h-12 w-12" />}
-            title="暂无决议"
-            description="当前筛选条件下没有找到任何决议"
+            title="暂无提案"
+            description="当前筛选条件下没有找到任何提案"
             action={
               <Button variant="outline" onClick={() => setFilter('all')}>
                 查看全部

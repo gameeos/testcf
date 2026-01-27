@@ -1,4 +1,4 @@
-// 决议状态
+// 提案状态
 export type ResolutionStatus =
   | 'Unresolved'
   | 'Proposed'
@@ -18,7 +18,7 @@ export interface Market {
   endTime: number; // timestamp
 }
 
-// 决议信息
+// 提案信息
 export interface Resolution {
   id: string;
   marketId: string;

@@ -13,6 +13,8 @@ import { Separator } from '@/components/ui/separator';
 import { ResolutionStatusBadge } from '@/components/resolution/resolution-status';
 import { ResolutionTimeline } from '@/components/resolution/resolution-timeline';
 import { CountdownTimer } from '@/components/resolution/countdown-timer';
+import { VoteProgress } from '@/components/arbitration/vote-progress';
+import { ArbitratorList } from '@/components/arbitration/arbitrator-list';
 import { AddressDisplay } from '@/components/shared/address-display';
 import { EmptyState } from '@/components/shared/empty-state';
 import { getResolutionById } from '@/data/mock-data';
@@ -36,8 +38,8 @@ export function ResolutionDetailPage() {
     return (
       <PageLayout>
         <EmptyState
-          title="决议不存在"
-          description="找不到指定的决议记录"
+          title="提案不存在"
+          description="找不到指定的提案记录"
           action={
             <Button variant="outline" onClick={() => navigate('/resolutions')}>
               返回列表
@@ -81,7 +83,7 @@ export function ResolutionDetailPage() {
               <h1 className="text-xl font-bold text-foreground">
                 Resolution #{resolution.id}
               </h1>
-              <ResolutionStatusBadge status={resolution.status} />
+              <ResolutionStatusBadge status={resolution.status} resolution={resolution} />
             </div>
             <p className="text-sm text-muted-foreground">
               Market ID: {resolution.marketId}
@@ -127,12 +129,12 @@ export function ResolutionDetailPage() {
             </CardContent>
           </Card>
 
-          {/* 决议状态 */}
+          {/* 提案状态 */}
           <Card className="bg-card/50">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Gavel className="h-4 w-4" />
-                决议状态
+                提案状态
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -193,16 +195,16 @@ export function ResolutionDetailPage() {
           </CardContent>
         </Card>
 
-        {/* 操作区域 - 发起争议 */}
+        {/* 操作区域 - 申请仲裁 */}
         {isInChallengeWindow && (
           <Card className="border-orange-500/30 bg-orange-500/5">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base text-orange-400">
                 <AlertTriangle className="h-4 w-4" />
-                发起争议
+                申请仲裁
               </CardTitle>
               <CardDescription>
-                您可以在挑战窗口期内对此决议结果提出争议
+                您可以在挑战期内对此提案结果申请仲裁
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -221,7 +223,7 @@ export function ResolutionDetailPage() {
                 </div>
                 <Button asChild>
                   <Link to={`/challenge/new?resolutionId=${resolution.id}`}>
-                    发起争议
+                    申请仲裁
                   </Link>
                 </Button>
               </div>
@@ -332,6 +334,25 @@ export function ResolutionDetailPage() {
           </Card>
         )}
 
+        {/* 仲裁进度 */}
+        {resolution.arbitration && (
+          <Card className="bg-card/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Gavel className="h-4 w-4" />
+                仲裁投票
+              </CardTitle>
+              <CardDescription>
+                委员会投票进度 - 需要 2/3 多数票通过
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <VoteProgress arbitration={resolution.arbitration} />
+              <Separator />
+              <ArbitratorList arbitration={resolution.arbitration} />
+            </CardContent>
+          </Card>
+        )}
       </div>
     </PageLayout>
   );

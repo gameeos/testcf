@@ -49,10 +49,10 @@ function getTimelineSteps(resolution: Resolution): TimelineStep[] {
     });
   }
 
-  // 3. 争议（如有）
+  // 3. 仲裁申请（如有）
   if (resolution.dispute) {
     steps.push({
-      label: '争议提交',
+      label: '仲裁申请',
       status: 'completed',
       timestamp: resolution.dispute.disputeTime,
     });
@@ -68,10 +68,10 @@ function getTimelineSteps(resolution: Resolution): TimelineStep[] {
     }
   }
 
-  // 5. 最终决议
+  // 5. 最终结算
   if (resolution.status === 'Resolved') {
     steps.push({
-      label: '决议完成',
+      label: resolution.arbitration?.finalized ? '仲裁完成' : '已生效',
       status: 'completed',
     });
   } else if (resolution.status === 'Invalid') {

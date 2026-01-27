@@ -11,8 +11,8 @@ import {
 import { isArbitrator, currentUserAddress } from "@/data/mock-data";
 
 const navItems = [
-  { label: "决议列表", href: "/resolutions" },
-  { label: "发起争议", href: "/challenge/new" },
+  { label: "提案列表", href: "/resolutions" },
+  { label: "申请仲裁", href: "/challenge/new" },
   { label: "仲裁管理", href: "/arbitration", requireArbitrator: true },
 ];
 

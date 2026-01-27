@@ -26,7 +26,7 @@ export function ResolutionCard({ resolution }: ResolutionCardProps) {
     <Card className="flex flex-col bg-card/50 backdrop-blur transition-colors hover:bg-card/80">
       <CardHeader className="space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <ResolutionStatusBadge status={resolution.status} />
+          <ResolutionStatusBadge status={resolution.status} resolution={resolution} />
           <Badge
             variant="outline"
             className={

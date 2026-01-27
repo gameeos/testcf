@@ -29,9 +29,9 @@ export const mockArbitrators: Arbitrator[] = [
   },
 ];
 
-// 模拟决议数据
+// 模拟提案数据
 export const mockResolutions: Resolution[] = [
-  // 1. 待挑战状态 - 还有较多时间
+  // 1. 挑战期状态 - 还有较多时间
   {
     id: 'res-001',
     marketId: 'mkt-001',
@@ -52,7 +52,7 @@ export const mockResolutions: Resolution[] = [
     bondAmount: 500,
   },
 
-  // 2. 待挑战状态 - 即将到期
+  // 2. 挑战期状态 - 即将到期
   {
     id: 'res-002',
     marketId: 'mkt-002',
@@ -130,7 +130,7 @@ export const mockResolutions: Resolution[] = [
     },
   },
 
-  // 4. 已决议状态 - 无争议自动确认
+  // 4. 已生效状态 - 无仲裁自动确认
   {
     id: 'res-004',
     marketId: 'mkt-004',
@@ -149,7 +149,7 @@ export const mockResolutions: Resolution[] = [
     bondAmount: 500,
   },
 
-  // 5. 已决议状态 - 争议后改判
+  // 5. 已仲裁状态 - 仲裁后改判
   {
     id: 'res-005',
     marketId: 'mkt-005',
@@ -291,12 +291,12 @@ export const getCompletedArbitrations = (): Resolution[] => {
   );
 };
 
-// 根据ID获取决议
+// 根据ID获取提案
 export const getResolutionById = (id: string): Resolution | undefined => {
   return mockResolutions.find((r) => r.id === id);
 };
 
-// 根据争议ID获取决议
+// 根据仲裁申请ID获取提案
 export const getResolutionByDisputeId = (
   disputeId: string
 ): Resolution | undefined => {

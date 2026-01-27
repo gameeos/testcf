@@ -70,6 +70,10 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
       <CardContent className="flex-1 space-y-3">
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">{t('disputeCard.proposer')}</span>
+            <AddressDisplay address={resolution.proposer} chars={4} />
+          </div>
+          <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t('disputeCard.challenger')}</span>
             <AddressDisplay address={dispute.challenger} chars={4} />
           </div>

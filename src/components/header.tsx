@@ -54,7 +54,8 @@ export function Header() {
 
   return (
     <header className="w-full pt-8">
-      <div className="mx-auto max-w-7xl bg-card rounded-[45px] px-3 border border-border">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="bg-card rounded-[45px] px-3 border border-border">
         <div className="flex h-16 items-center justify-between">
           {/* Left Section: Logo + Navigation */}
           <div className="flex items-center gap-8">
@@ -211,6 +212,7 @@ export function Header() {
               </Button>
             )}
           </div>
+        </div>
         </div>
       </div>
     </header>

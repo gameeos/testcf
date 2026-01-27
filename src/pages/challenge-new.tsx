@@ -48,6 +48,7 @@ export function ChallengeNewPage() {
   const resolution = resolutionId ? getResolutionById(resolutionId) : undefined;
 
   // 表单状态
+  const [disputeId, setDisputeId] = useState('');
   const [disputeType, setDisputeType] = useState<DisputeType>('Outcome');
   const [challengedOutcome, setChallengedOutcome] = useState<'YES' | 'NO'>(
     resolution?.proposedOutcome === 'YES' ? 'NO' : 'YES'
@@ -63,6 +64,7 @@ export function ChallengeNewPage() {
 
   // 验证
   const isValid =
+    disputeId.trim().length > 0 &&
     reason.trim().length > 0 &&
     evidenceUrls.some((url) => url.trim().length > 0);
 
@@ -237,6 +239,24 @@ export function ChallengeNewPage() {
             <CardDescription>{t('challenge.form.subtitle')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Dispute ID */}
+            <div className="space-y-3">
+              <Label htmlFor="disputeId">
+                {t('challenge.form.disputeId')} <span className="text-red-400">*</span>
+              </Label>
+              <Input
+                id="disputeId"
+                placeholder={t('challenge.form.disputeIdPlaceholder')}
+                value={disputeId}
+                onChange={(e) => setDisputeId(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">
+                {t('challenge.form.disputeIdHint')}
+              </p>
+            </div>
+
+            <Separator />
+
             {/* 仲裁类型 */}
             <div className="space-y-3">
               <Label>{t('challenge.form.disputeType')}</Label>

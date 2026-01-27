@@ -19,6 +19,12 @@ export function BondWarning({ amount }: BondWarningProps) {
           </p>
           <ul className="space-y-1 text-sm text-muted-foreground">
             <li className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
+              <span>
+                <span className="text-muted-foreground">{t('bondWarning.noChallenge')}</span>: {t('bondWarning.noChallengeResult')}
+              </span>
+            </li>
+            <li className="flex items-center gap-2">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               <span>
                 <span className="text-emerald-400">{t('bondWarning.win')}</span>: {t('bondWarning.winResult')}
@@ -28,6 +34,12 @@ export function BondWarning({ amount }: BondWarningProps) {
               <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
               <span>
                 <span className="text-red-400">{t('bondWarning.lose')}</span>: {t('bondWarning.loseResult')}
+              </span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+              <span>
+                <span className="text-amber-400">{t('bondWarning.invalid')}</span>: {t('bondWarning.invalidResult')}
               </span>
             </li>
           </ul>

@@ -34,6 +34,7 @@ export const mockResolutions: Resolution[] = [
   // 1. 挑战期状态 - 还有较多时间
   {
     id: 'res-001',
+    resolutionId: '1001',
     marketId: 'mkt-001',
     market: {
       id: 'mkt-001',
@@ -47,6 +48,8 @@ export const mockResolutions: Resolution[] = [
     proposedOutcome: 'YES',
     proposer: '0xProposer111111111111111111111111111111',
     proposeTime: now - 30 * 60 * 1000, // 30分钟前
+    endTime: now + 7 * 24 * HOUR,
+    disputeWindowTime: 3 * HOUR,
     challengeDeadline: now + 2.5 * HOUR, // 还有2.5小时
     status: 'Proposed',
     bondAmount: 500,
@@ -55,6 +58,7 @@ export const mockResolutions: Resolution[] = [
   // 2. 挑战期状态 - 即将到期
   {
     id: 'res-002',
+    resolutionId: '1002',
     marketId: 'mkt-002',
     market: {
       id: 'mkt-002',
@@ -66,6 +70,8 @@ export const mockResolutions: Resolution[] = [
     proposedOutcome: 'YES',
     proposer: '0xProposer222222222222222222222222222222',
     proposeTime: now - 2.5 * HOUR,
+    endTime: now + 7 * 24 * HOUR,
+    disputeWindowTime: 3 * HOUR,
     challengeDeadline: now + 30 * 60 * 1000, // 还有30分钟
     status: 'Proposed',
     bondAmount: 500,
@@ -74,6 +80,7 @@ export const mockResolutions: Resolution[] = [
   // 3. 已争议状态 - 仲裁进行中
   {
     id: 'res-003',
+    resolutionId: '1003',
     marketId: 'mkt-003',
     market: {
       id: 'mkt-003',
@@ -85,6 +92,8 @@ export const mockResolutions: Resolution[] = [
     proposedOutcome: 'YES',
     proposer: '0xProposer333333333333333333333333333333',
     proposeTime: now - 20 * HOUR,
+    endTime: now + 7 * 24 * HOUR,
+    disputeWindowTime: 3 * HOUR,
     challengeDeadline: now - 17 * HOUR,
     status: 'Challenged',
     bondAmount: 500,
@@ -133,6 +142,7 @@ export const mockResolutions: Resolution[] = [
   // 4. 已生效状态 - 无仲裁自动确认
   {
     id: 'res-004',
+    resolutionId: '1004',
     marketId: 'mkt-004',
     market: {
       id: 'mkt-004',
@@ -144,6 +154,8 @@ export const mockResolutions: Resolution[] = [
     proposedOutcome: 'NO',
     proposer: '0xProposer444444444444444444444444444444',
     proposeTime: now - 70 * HOUR,
+    endTime: now + 7 * 24 * HOUR,
+    disputeWindowTime: 3 * HOUR,
     challengeDeadline: now - 67 * HOUR,
     status: 'Resolved',
     bondAmount: 500,
@@ -152,6 +164,7 @@ export const mockResolutions: Resolution[] = [
   // 5. 已仲裁状态 - 仲裁后改判
   {
     id: 'res-005',
+    resolutionId: '1005',
     marketId: 'mkt-005',
     market: {
       id: 'mkt-005',
@@ -164,6 +177,8 @@ export const mockResolutions: Resolution[] = [
     proposedOutcome: 'NO',
     proposer: '0xProposer555555555555555555555555555555',
     proposeTime: now - 94 * HOUR,
+    endTime: now + 7 * 24 * HOUR,
+    disputeWindowTime: 3 * HOUR,
     challengeDeadline: now - 91 * HOUR,
     status: 'Resolved',
     bondAmount: 500,
@@ -217,6 +232,7 @@ export const mockResolutions: Resolution[] = [
   // 6. 作废状态
   {
     id: 'res-006',
+    resolutionId: '1006',
     marketId: 'mkt-006',
     market: {
       id: 'mkt-006',
@@ -228,6 +244,8 @@ export const mockResolutions: Resolution[] = [
     proposedOutcome: 'YES',
     proposer: '0xProposer666666666666666666666666666666',
     proposeTime: now - 118 * HOUR,
+    endTime: now + 7 * 24 * HOUR,
+    disputeWindowTime: 3 * HOUR,
     challengeDeadline: now - 115 * HOUR,
     status: 'Invalid',
     bondAmount: 500,

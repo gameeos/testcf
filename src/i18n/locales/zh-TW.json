@@ -97,6 +97,8 @@
     "requiredToPass": "通過所需：",
     "votes": "票",
     "majority": "2/3 多數",
+    "unanimousRequired": "全票通過",
+    "unanimousNote": "注意：當委員人數少於 3 人時，需要全票通過才能使爭議生效。",
     "ifNotMet": "未達標：",
     "maintainOriginal": "維持原判",
     "voteStatus": "投票狀態",
@@ -134,6 +136,9 @@
     "form": {
       "title": "仲裁申請內容",
       "subtitle": "填寫您的仲裁理由和證據材料",
+      "disputeId": "爭議 ID",
+      "disputeIdPlaceholder": "輸入唯一的爭議標識符",
+      "disputeIdHint": "此 ID 將用於在鏈上識別此爭議。請確保其唯一性。",
       "disputeType": "仲裁類型",
       "outcomeDispute": "結果仲裁",
       "ruleDispute": "規則仲裁",
@@ -156,10 +161,14 @@
   "bondWarning": {
     "title": "押金說明",
     "description": "發起爭議需質押",
-    "win": "勝訴",
-    "winResult": "押金全額退還",
-    "lose": "敗訴",
-    "loseResult": "押金沒收至平台金庫"
+    "noChallenge": "無挑戰",
+    "noChallengeResult": "押金返還給提案人",
+    "win": "挑戰成功",
+    "winResult": "押金獎勵給爭議方",
+    "lose": "挑戰失敗",
+    "loseResult": "押金獎勵給提案人",
+    "invalid": "市場作廢",
+    "invalidResult": "雙方押金返還或扣除"
   },
   "confirmDialog": {
     "submitTitle": "確認提交仲裁申請",
@@ -190,6 +199,8 @@
     "oppose": "反對",
     "pending": "待投",
     "passRequired": "通過需要",
+    "unanimous": "全票通過",
+    "twoThirds": "2/3 多數",
     "disputePassed": "爭議通過：結果已改判",
     "disputeRejected": "爭議駁回：維持原判"
   },
@@ -210,6 +221,7 @@
     "pendingVote": "待投票",
     "outcomeDispute": "結果仲裁",
     "ruleDispute": "規則仲裁",
+    "proposer": "提案人",
     "challenger": "爭議方",
     "originalProposal": "原提案",
     "claimedOutcome": "主張結果",

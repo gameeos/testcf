@@ -97,6 +97,8 @@
     "requiredToPass": "Required to Pass:",
     "votes": "votes",
     "majority": "2/3 majority",
+    "unanimousRequired": "unanimous",
+    "unanimousNote": "Note: When there are fewer than 3 arbitrators, unanimous approval is required for the dispute to pass.",
     "ifNotMet": "If Not Met:",
     "maintainOriginal": "Maintain Original",
     "voteStatus": "Vote Status",
@@ -134,6 +136,9 @@
     "form": {
       "title": "Challenge Application",
       "subtitle": "Fill in your challenge reason and evidence",
+      "disputeId": "Dispute ID",
+      "disputeIdPlaceholder": "Enter unique dispute identifier",
+      "disputeIdHint": "This ID will be used to identify this dispute on-chain. Please ensure it is unique.",
       "disputeType": "Dispute Type",
       "outcomeDispute": "Outcome Dispute",
       "ruleDispute": "Rule Dispute",
@@ -156,10 +161,14 @@
   "bondWarning": {
     "title": "Bond Notice",
     "description": "Filing a challenge requires a bond of",
-    "win": "Win",
-    "winResult": "Full refund of bond",
-    "lose": "Lose",
-    "loseResult": "Bond forfeited to platform treasury"
+    "noChallenge": "No Challenge",
+    "noChallengeResult": "Bond returned to proposer",
+    "win": "Challenge Success",
+    "winResult": "Bond awarded to challenger",
+    "lose": "Challenge Failed",
+    "loseResult": "Bond awarded to proposer",
+    "invalid": "Market Invalid",
+    "invalidResult": "Bond returned to both parties or deducted"
   },
   "confirmDialog": {
     "submitTitle": "Confirm Challenge Submission",
@@ -190,6 +199,8 @@
     "oppose": "Oppose",
     "pending": "Pending",
     "passRequired": "Required to pass",
+    "unanimous": "unanimous",
+    "twoThirds": "2/3 majority",
     "disputePassed": "Dispute Passed: Result Changed",
     "disputeRejected": "Dispute Rejected: Original Maintained"
   },
@@ -210,6 +221,7 @@
     "pendingVote": "Pending Vote",
     "outcomeDispute": "Outcome Dispute",
     "ruleDispute": "Rule Dispute",
+    "proposer": "Proposer",
     "challenger": "Challenger",
     "originalProposal": "Original Proposal",
     "claimedOutcome": "Claimed Outcome",

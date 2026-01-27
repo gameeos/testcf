@@ -79,7 +79,10 @@ export function ArbitrationDetailPage() {
   }
 
   const { dispute, arbitration } = resolution;
-  const threshold = Math.ceil((arbitration.totalArbitrators * 2) / 3);
+  const isUnanimousRequired = arbitration.totalArbitrators < 3;
+  const threshold = isUnanimousRequired
+    ? arbitration.totalArbitrators
+    : Math.ceil((arbitration.totalArbitrators * 2) / 3);
 
   const formatTime = (timestamp: number) => {
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
@@ -307,7 +310,8 @@ export function ArbitrationDetailPage() {
               <div>
                 <span className="text-muted-foreground">{t('arbitration.requiredToPass')}</span>
                 <span className="ml-1 font-medium text-foreground">
-                  {threshold}/{arbitration.totalArbitrators} {t('arbitration.votes')} ({t('arbitration.majority')})
+                  {threshold}/{arbitration.totalArbitrators} {t('arbitration.votes')} (
+                  {isUnanimousRequired ? t('arbitration.unanimousRequired') : t('arbitration.majority')})
                 </span>
               </div>
               <div>
@@ -317,6 +321,11 @@ export function ArbitrationDetailPage() {
                 </span>
               </div>
             </div>
+            {isUnanimousRequired && (
+              <p className="mt-3 text-xs text-amber-400">
+                {t('arbitration.unanimousNote')}
+              </p>
+            )}
           </CardContent>
         </Card>
 

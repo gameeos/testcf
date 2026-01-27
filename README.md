@@ -1,10 +1,10 @@
 # Orbit Arbitration UI
 
-预测市场仲裁系统 - 基于 Optimistic Oracle 的去中心化争议解决平台
+仲裁系统 - 基于 Optimistic Oracle 的去中心化争议解决平台
 
 ## 📖 项目简介
 
-本项目是预测市场平台的仲裁子系统，实现了完整的争议解决流程。用户可以在主站每个 event 下点击"发起仲裁"按钮跳转到本系统（主站的二级域名），完成结果仲裁的全流程操作。
+本项目是平台的仲裁子系统，实现了完整的争议解决流程。用户可以在主站每个 event 下点击"发起仲裁"按钮跳转到本系统（主站的二级域名），完成结果仲裁的全流程操作。
 
 ### 核心功能
 
@@ -29,9 +29,20 @@
 ### 关键参数
 
 - **争议押金**: 500 USDT
-- **挑战窗口**: 3 小时
+- **挑战窗口**: 3 小时（可配置 `disputeWindowTime`）
 - **仲裁时效**: 24小时内裁决（复杂案件最长72小时）
-- **投票规则**: 委员<3需全票，≥3需2/3赞成票通过
+- **投票规则**:
+  - 委员 < 3 人：需**全票通过**
+  - 委员 ≥ 3 人：需 **2/3 赞成票**通过
+
+### Bond 激励模型
+
+| 情况 | Bond 归属 |
+|------|-----------|
+| 无挑战 | 返还给提案人 (proposer) |
+| 挑战成功 | 奖励给争议方 (challenger) |
+| 挑战失败 | 奖励给提案人 (proposer) |
+| 市场作废 | 双方返还或扣除 |
 
 ## 🗺️ 页面路由
 
@@ -40,7 +51,7 @@
 | `/` | - | 重定向到 `/resolutions` |
 | `/resolutions` | 决议列表 | 展示所有市场决议，支持状态筛选 |
 | `/resolution/:id` | 决议详情 | 查看详情、时间线，发起争议入口 |
-| `/challenge/new?resolutionId=xxx` | 发起争议 | 填写争议表单，提交证据 |
+| `/challenge/new?resolutionId=xxx` | 发起争议 | 填写争议表单（含 disputeId），提交证据 |
 | `/arbitration` | 仲裁管理面板 | 仲裁委员专用，查看待处理案件 |
 | `/arbitration/:disputeId` | 仲裁投票详情 | 查看案件详情，进行投票 |
 
@@ -170,14 +181,15 @@ orbit-arbitration-ui/
 - 查看争议信息和仲裁投票进度
 
 ### 3. Challenge (发起争议) `/challenge/new`
+- 输入唯一的 Dispute ID（合约调用必需）
 - 选择争议类型（结果仲裁/规则仲裁）
 - 填写争议理由和主张结果
 - 提交证据材料（链接、文件、Tx Hash）
-- 押金说明和确认弹窗
+- 押金说明（含全部 4 种归属场景）和确认弹窗
 
 ### 4. Arbitration Dashboard (仲裁管理面板) `/arbitration`
 - 仲裁委员身份标识
-- 查看待仲裁案件列表
+- 查看待仲裁案件列表（含提案人和争议方信息）
 - 查看已完成案件
 - 查看个人投票记录
 - 统计卡片（待处理/已完成/我的投票）
@@ -185,7 +197,7 @@ orbit-arbitration-ui/
 ### 5. Arbitration Detail (仲裁投票详情) `/arbitration/:disputeId`
 - 原始提案 vs 争议方主张对比
 - 查看争议理由和证据材料
-- 投票规则说明（2/3 多数通过）
+- **投票规则说明**（根据委员数量动态显示：< 3 人全票通过，≥ 3 人 2/3 多数）
 - 投票进度条和委员投票状态
 - 投票面板（支持/反对，不可撤销）
 
@@ -225,20 +237,69 @@ src/components/
     └── empty-state.tsx         # 空状态占位
 ```
 
-## 🗃️ 模拟数据
+## 🗃️ 数据结构
+
+### Resolution (决议)
+
+```typescript
+interface Resolution {
+  id: string;              // 内部 ID
+  resolutionId: string;    // 链上决议 ID
+  marketId: string;        // 市场 ID
+  market: Market;          // 市场信息
+  proposedOutcome: 'YES' | 'NO';
+  proposer: string;        // 提案人地址
+  proposeTime: number;     // 提案时间戳
+  endTime: number;         // 决议结束时间
+  disputeWindowTime: number; // 挑战窗口时长
+  challengeDeadline: number; // 挑战截止时间戳
+  status: ResolutionStatus;
+  bondAmount: number;
+  dispute?: Dispute;
+  arbitration?: Arbitration;
+}
+```
+
+### 模拟数据
 
 项目包含 6 条模拟决议数据，覆盖所有状态场景：
 
-| ID | 状态 | 场景说明 |
-|----|------|----------|
-| res-001 | Proposed | 待挑战，还有 2.5 小时 |
-| res-002 | Proposed | 待挑战，即将到期（30分钟内） |
-| res-003 | Challenged | 仲裁进行中，1支持/1反对/1待投 |
-| res-004 | Resolved | 无争议自动确认 |
-| res-005 | Resolved | 争议后全票改判 |
-| res-006 | Invalid | 市场作废 |
+| ID | Resolution ID | 状态 | 场景说明 |
+|----|---------------|------|----------|
+| res-001 | 1001 | Proposed | 待挑战，还有 2.5 小时 |
+| res-002 | 1002 | Proposed | 待挑战，即将到期（30分钟内） |
+| res-003 | 1003 | Challenged | 仲裁进行中，1支持/1反对/1待投 |
+| res-004 | 1004 | Resolved | 无争议自动确认 |
+| res-005 | 1005 | Resolved | 争议后全票改判 |
+| res-006 | 1006 | Invalid | 市场作废 |
 
 修改 `src/data/mock-data.ts` 可自定义测试数据。
+
+## 🔗 合约接口
+
+前端页面对应的合约调用接口：
+
+```typescript
+// 提交争议 (Challenge 页面)
+challenge(
+  disputeId: string,      // 用户输入的唯一 ID
+  resolutionId: string,   // 从 Resolution 获取
+  marketId: string,       // 从 Resolution 获取
+  disputeType: number,    // 0: Outcome, 1: Rule
+  challengedOutcome: string,
+  reason: string          // 争议描述 URL
+): Promise<TransactionResponse>
+
+// 仲裁投票 (Arbitration Detail 页面)
+vote(disputeId: string, support: boolean): Promise<TransactionResponse>
+
+// 查询最终结果
+getFinalOutcome(marketId: string): Promise<{
+  outcome: string,
+  resolved: boolean,
+  invalid: boolean
+}>
+```
 
 ## 🔮 后续开发
 

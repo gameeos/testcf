@@ -21,11 +21,14 @@ export interface Market {
 // 提案信息
 export interface Resolution {
   id: string;
+  resolutionId: string;
   marketId: string;
   market: Market;
   proposedOutcome: 'YES' | 'NO';
   proposer: string;
   proposeTime: number;
+  endTime: number;
+  disputeWindowTime: number;
   challengeDeadline: number;
   status: ResolutionStatus;
   bondAmount: number;

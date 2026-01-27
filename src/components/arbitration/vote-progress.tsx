@@ -16,8 +16,13 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
   const yesPercentage = totalArbitrators > 0 ? (yesVotes / totalArbitrators) * 100 : 0;
   const noPercentage = totalArbitrators > 0 ? (noVotes / totalArbitrators) * 100 : 0;
 
-  // 判断是否通过（2/3多数）
-  const threshold = Math.ceil((totalArbitrators * 2) / 3);
+  // 判断是否通过
+  // 委员数量 < 3：必须全票通过
+  // 委员数量 ≥ 3：需 ≥ 2/3 赞成票
+  const isUnanimousRequired = totalArbitrators < 3;
+  const threshold = isUnanimousRequired
+    ? totalArbitrators
+    : Math.ceil((totalArbitrators * 2) / 3);
   const passed = yesVotes >= threshold;
 
   return (
@@ -55,6 +60,7 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
 
         <span className="text-muted-foreground">
           {t('voteProgress.passRequired')} {threshold}/{totalArbitrators}
+          {isUnanimousRequired ? ` (${t('voteProgress.unanimous')})` : ` (${t('voteProgress.twoThirds')})`}
         </span>
       </div>
 

@@ -36,7 +36,6 @@ export function Header() {
 
   const navItems = [
     { label: t("nav.resolutions"), href: "/resolutions" },
-    { label: t("nav.challenge"), href: "/challenge/new" },
     { label: t("nav.arbitration"), href: "/arbitration", requireArbitrator: true },
   ];
 
@@ -59,12 +58,17 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Left Section: Logo + Navigation */}
           <div className="flex items-center gap-8">
-            {/* Logo */}
+            {/* Logo - 根据主题切换 */}
             <Link to="/" className="flex items-center gap-2">
               <img
-                src="/logo-dark.svg"
+                src="/logo.png"
                 alt="Orbit"
-                className="h-8 w-auto"
+                className="h-8 w-auto dark:hidden"
+              />
+              <img
+                src="/logo-dark.png"
+                alt="Orbit"
+                className="h-8 w-auto hidden dark:block"
               />
             </Link>
 
@@ -82,9 +86,6 @@ export function Header() {
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    {item.requireArbitrator && (
-                      <Shield className="h-3.5 w-3.5" />
-                    )}
                     {item.label}
                   </Link>
                 );

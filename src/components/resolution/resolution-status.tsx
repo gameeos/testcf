@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import type { Resolution, ResolutionStatus } from '@/types';
 import { cn } from '@/lib/utils';
@@ -7,17 +8,6 @@ interface ResolutionStatusBadgeProps {
   resolution?: Resolution;
   className?: string;
 }
-
-const statusConfig: Record<
-  ResolutionStatus,
-  { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
-> = {
-  Unresolved: { label: '待提案', variant: 'secondary' },
-  Proposed: { label: '挑战期', variant: 'default' },
-  Challenged: { label: '仲裁中', variant: 'outline' },
-  Resolved: { label: '已生效', variant: 'secondary' },
-  Invalid: { label: '已作废', variant: 'destructive' },
-};
 
 const statusColorClass: Record<ResolutionStatus, string> = {
   Unresolved: 'bg-gray-500/20 text-gray-400 border-gray-500/50',
@@ -32,17 +22,25 @@ export function ResolutionStatusBadge({
   resolution,
   className,
 }: ResolutionStatusBadgeProps) {
-  const config = statusConfig[status];
+  const { t } = useTranslation();
+
+  const statusLabelMap: Record<ResolutionStatus, string> = {
+    Unresolved: t('status.unresolved'),
+    Proposed: t('status.proposed'),
+    Challenged: t('status.challenged'),
+    Resolved: t('status.resolved'),
+    Invalid: t('status.invalid'),
+  };
 
   // 对于 Resolved 状态，区分"已生效"和"已仲裁"
-  let label = config.label;
+  let label = statusLabelMap[status];
   if (status === 'Resolved' && resolution?.arbitration?.finalized) {
-    label = '已仲裁';
+    label = t('status.arbitrated');
   }
 
   return (
     <Badge
-      variant={config.variant}
+      variant="outline"
       className={cn(statusColorClass[status], className)}
     >
       {label}

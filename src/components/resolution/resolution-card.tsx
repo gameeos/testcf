@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -18,6 +19,7 @@ interface ResolutionCardProps {
 }
 
 export function ResolutionCard({ resolution }: ResolutionCardProps) {
+  const { t } = useTranslation();
   const isInChallengeWindow =
     resolution.status === 'Proposed' &&
     resolution.challengeDeadline > Date.now();
@@ -50,7 +52,7 @@ export function ResolutionCard({ resolution }: ResolutionCardProps) {
 
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">提案人</span>
+            <span className="text-muted-foreground">{t('resolutionCard.proposer')}</span>
             <AddressDisplay address={resolution.proposer} chars={4} />
           </div>
 
@@ -58,7 +60,7 @@ export function ResolutionCard({ resolution }: ResolutionCardProps) {
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1 text-muted-foreground">
                 <Clock className="h-3.5 w-3.5" />
-                挑战截止
+                {t('resolutionCard.challengeDeadline')}
               </span>
               <CountdownTimer deadline={resolution.challengeDeadline} />
             </div>
@@ -66,7 +68,7 @@ export function ResolutionCard({ resolution }: ResolutionCardProps) {
 
           {resolution.status === 'Challenged' && resolution.dispute && (
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">争议方</span>
+              <span className="text-muted-foreground">{t('resolutionCard.challenger')}</span>
               <AddressDisplay address={resolution.dispute.challenger} chars={4} />
             </div>
           )}
@@ -76,7 +78,7 @@ export function ResolutionCard({ resolution }: ResolutionCardProps) {
       <CardFooter>
         <Button variant="outline" className="w-full" asChild>
           <Link to={`/resolution/${resolution.id}`}>
-            查看详情
+            {t('resolutionCard.viewDetails')}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>

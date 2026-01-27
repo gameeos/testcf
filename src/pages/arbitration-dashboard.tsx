@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout/page-layout';
 import { DisputeCard } from '@/components/arbitration/dispute-card';
 import { EmptyState } from '@/components/shared/empty-state';
@@ -17,6 +18,7 @@ import { Gavel, Shield, CheckCircle, Clock } from 'lucide-react';
 type TabValue = 'pending' | 'completed' | 'my-votes';
 
 export function ArbitrationDashboardPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabValue>('pending');
 
   const pendingArbitrations = getPendingArbitrations();
@@ -36,9 +38,9 @@ export function ArbitrationDashboardPage() {
         {/* 页面标题 */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">仲裁管理面板</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('arbitrationDashboard.title')}</h1>
             <p className="mt-1 text-muted-foreground">
-              查看和处理待仲裁案件
+              {t('arbitrationDashboard.subtitle')}
             </p>
           </div>
 
@@ -50,14 +52,14 @@ export function ArbitrationDashboardPage() {
                 className="gap-1.5 border-emerald-500/50 bg-emerald-500/10 px-3 py-1.5 text-emerald-400"
               >
                 <Shield className="h-3.5 w-3.5" />
-                仲裁委员
+                {t('arbitrationDashboard.arbitrator')}
               </Badge>
             ) : (
               <Badge
                 variant="outline"
                 className="gap-1.5 border-orange-500/50 bg-orange-500/10 px-3 py-1.5 text-orange-400"
               >
-                非委员身份
+                {t('arbitrationDashboard.notArbitrator')}
               </Badge>
             )}
             <AddressDisplay address={currentUserAddress} chars={4} />
@@ -75,7 +77,7 @@ export function ArbitrationDashboardPage() {
                 <p className="text-2xl font-bold text-foreground">
                   {pendingArbitrations.length}
                 </p>
-                <p className="text-sm text-muted-foreground">待仲裁</p>
+                <p className="text-sm text-muted-foreground">{t('arbitrationDashboard.pending')}</p>
               </div>
             </div>
           </div>
@@ -88,7 +90,7 @@ export function ArbitrationDashboardPage() {
                 <p className="text-2xl font-bold text-foreground">
                   {completedArbitrations.length}
                 </p>
-                <p className="text-sm text-muted-foreground">已完成</p>
+                <p className="text-sm text-muted-foreground">{t('arbitrationDashboard.completed')}</p>
               </div>
             </div>
           </div>
@@ -101,7 +103,7 @@ export function ArbitrationDashboardPage() {
                 <p className="text-2xl font-bold text-foreground">
                   {myVotes.length}
                 </p>
-                <p className="text-sm text-muted-foreground">我的投票</p>
+                <p className="text-sm text-muted-foreground">{t('arbitrationDashboard.myVotes')}</p>
               </div>
             </div>
           </div>
@@ -115,7 +117,7 @@ export function ArbitrationDashboardPage() {
           <TabsList className="bg-card/50">
             <TabsTrigger value="pending" className="gap-1.5">
               <Clock className="h-3.5 w-3.5" />
-              待仲裁
+              {t('arbitrationDashboard.pending')}
               {pendingArbitrations.length > 0 && (
                 <Badge variant="secondary" className="ml-1 h-5 px-1.5">
                   {pendingArbitrations.length}
@@ -124,11 +126,11 @@ export function ArbitrationDashboardPage() {
             </TabsTrigger>
             <TabsTrigger value="completed" className="gap-1.5">
               <CheckCircle className="h-3.5 w-3.5" />
-              已完成
+              {t('arbitrationDashboard.completed')}
             </TabsTrigger>
             <TabsTrigger value="my-votes" className="gap-1.5">
               <Gavel className="h-3.5 w-3.5" />
-              我的投票
+              {t('arbitrationDashboard.myVotes')}
             </TabsTrigger>
           </TabsList>
 
@@ -142,8 +144,8 @@ export function ArbitrationDashboardPage() {
             ) : (
               <EmptyState
                 icon={<Clock className="h-12 w-12" />}
-                title="暂无待仲裁案件"
-                description="当前没有需要处理的仲裁案件"
+                title={t('arbitrationDashboard.noPendingCases')}
+                description={t('arbitrationDashboard.noPendingCasesDesc')}
               />
             )}
           </TabsContent>
@@ -158,8 +160,8 @@ export function ArbitrationDashboardPage() {
             ) : (
               <EmptyState
                 icon={<CheckCircle className="h-12 w-12" />}
-                title="暂无已完成案件"
-                description="还没有完成的仲裁记录"
+                title={t('arbitrationDashboard.noCompletedCases')}
+                description={t('arbitrationDashboard.noCompletedCasesDesc')}
               />
             )}
           </TabsContent>
@@ -174,8 +176,8 @@ export function ArbitrationDashboardPage() {
             ) : (
               <EmptyState
                 icon={<Gavel className="h-12 w-12" />}
-                title="暂无投票记录"
-                description="您还没有参与过任何仲裁投票"
+                title={t('arbitrationDashboard.noVoteRecords')}
+                description={t('arbitrationDashboard.noVoteRecordsDesc')}
               />
             )}
           </TabsContent>

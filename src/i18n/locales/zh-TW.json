@@ -1,0 +1,232 @@
+{
+  "nav": {
+    "resolutions": "提案列表",
+    "challenge": "申請仲裁",
+    "arbitration": "仲裁管理"
+  },
+  "header": {
+    "search": "搜尋...",
+    "profile": "個人資料",
+    "settings": "設定",
+    "signOut": "登出",
+    "login": "登入"
+  },
+  "theme": {
+    "light": "淺色",
+    "dark": "深色",
+    "system": "系統"
+  },
+  "language": {
+    "en": "English",
+    "zhTW": "繁體中文"
+  },
+  "common": {
+    "all": "全部",
+    "viewDetails": "查看詳情",
+    "back": "返回",
+    "backToList": "返回列表",
+    "cancel": "取消",
+    "confirm": "確認",
+    "submit": "提交",
+    "yes": "YES",
+    "no": "NO"
+  },
+  "status": {
+    "unresolved": "待提案",
+    "proposed": "挑戰期",
+    "challenged": "仲裁中",
+    "resolved": "已生效",
+    "invalid": "已作廢",
+    "arbitrated": "已仲裁"
+  },
+  "resolutions": {
+    "title": "提案列表",
+    "subtitle": "查看所有市場結算提案，在挑戰期內可申請仲裁",
+    "filterAll": "全部",
+    "filterProposed": "挑戰期",
+    "filterChallenged": "仲裁中",
+    "filterResolved": "已結算",
+    "filterInvalid": "已作廢",
+    "empty": "暫無提案",
+    "emptyDesc": "當前篩選條件下沒有找到任何提案",
+    "viewAll": "查看全部"
+  },
+  "resolution": {
+    "notFound": "提案不存在",
+    "notFoundDesc": "找不到指定的提案記錄",
+    "marketInfo": "市場資訊",
+    "settlementRules": "結算規則",
+    "marketEndTime": "市場結束時間",
+    "proposalStatus": "提案狀態",
+    "proposedOutcome": "提案結果",
+    "proposer": "提案人",
+    "proposeTime": "提案時間",
+    "challengeDeadline": "挑戰截止",
+    "bondAmount": "押金金額",
+    "processTimeline": "流程時間線",
+    "applyArbitration": "申請仲裁",
+    "applyArbitrationDesc": "您可以在挑戰期內對此提案結果申請仲裁",
+    "remainingTime": "剩餘時間：",
+    "requiredBond": "需質押："
+  },
+  "dispute": {
+    "info": "爭議資訊",
+    "type": "爭議類型",
+    "typeOutcome": "結果仲裁",
+    "typeRule": "規則仲裁",
+    "claimedOutcome": "主張結果",
+    "challenger": "爭議方",
+    "disputeTime": "爭議時間",
+    "reason": "爭議理由",
+    "evidence": "證據材料"
+  },
+  "arbitration": {
+    "voting": "仲裁投票",
+    "votingDesc": "委員會投票進度 - 需要 2/3 多數票通過",
+    "caseNotFound": "案件不存在",
+    "caseNotFoundDesc": "找不到指定的仲裁案件",
+    "originalProposal": "原始提案",
+    "challengerClaim": "爭議方主張",
+    "proposalResult": "提案結果",
+    "claimedResult": "主張結果",
+    "disputeReason": "爭議理由",
+    "disputeTypeLabel": "爭議類型：",
+    "votingRules": "投票規則",
+    "currentArbitrators": "當前委員數：",
+    "requiredToPass": "通過所需：",
+    "votes": "票",
+    "majority": "2/3 多數",
+    "ifNotMet": "未達標：",
+    "maintainOriginal": "維持原判",
+    "voteStatus": "投票狀態",
+    "myVote": "我的投票",
+    "myVoteDesc": "作為仲裁委員，請基於證據和規則做出公正裁決",
+    "notArbitrator": "您不是仲裁委員，無法參與投票",
+    "finished": "已完成",
+    "inProgress": "仲裁中"
+  },
+  "arbitrationDashboard": {
+    "title": "仲裁管理面板",
+    "subtitle": "查看和處理待仲裁案件",
+    "arbitrator": "仲裁委員",
+    "notArbitrator": "非委員身份",
+    "pending": "待仲裁",
+    "completed": "已完成",
+    "myVotes": "我的投票",
+    "noPendingCases": "暫無待仲裁案件",
+    "noPendingCasesDesc": "當前沒有需要處理的仲裁案件",
+    "noCompletedCases": "暫無已完成案件",
+    "noCompletedCasesDesc": "還沒有完成的仲裁記錄",
+    "noVoteRecords": "暫無投票記錄",
+    "noVoteRecordsDesc": "您還沒有參與過任何仲裁投票"
+  },
+  "challenge": {
+    "title": "申請仲裁",
+    "subtitle": "對 Resolution #{{id}} 申請仲裁",
+    "notFound": "提案不存在",
+    "notFoundDesc": "請從提案詳情頁申請仲裁",
+    "windowClosed": "挑戰窗口已關閉",
+    "windowClosedDesc": "該提案已超過挑戰期限，無法申請仲裁",
+    "backToDetails": "返回詳情",
+    "targetMarket": "目標市場",
+    "currentProposal": "當前提案結果",
+    "form": {
+      "title": "仲裁申請內容",
+      "subtitle": "填寫您的仲裁理由和證據材料",
+      "disputeType": "仲裁類型",
+      "outcomeDispute": "結果仲裁",
+      "ruleDispute": "規則仲裁",
+      "outcomeDisputeDesc": "對市場結果提出異議，認為提案結果錯誤",
+      "ruleDisputeDesc": "對市場規則提出異議，認為市場規則不合理或無法判定",
+      "correctOutcome": "您認為正確的結果",
+      "reason": "仲裁理由",
+      "reasonRequired": "必填",
+      "reasonPlaceholder": "請詳細說明您的仲裁理由...",
+      "reasonHint": "請提供清晰、具體的理由，說明為什麼當前提案結果是錯誤的",
+      "evidenceUrls": "權威來源連結",
+      "addLink": "添加連結",
+      "uploadFiles": "上傳文件（可選）",
+      "uploadButton": "上傳文件",
+      "supportedFormats": "支援圖片、PDF 格式",
+      "txHash": "鏈上 Tx Hash（可選）"
+    },
+    "submitApplication": "提交申請"
+  },
+  "bondWarning": {
+    "title": "押金說明",
+    "description": "發起爭議需質押",
+    "win": "勝訴",
+    "winResult": "押金全額退還",
+    "lose": "敗訴",
+    "loseResult": "押金沒收至平台金庫"
+  },
+  "confirmDialog": {
+    "submitTitle": "確認提交仲裁申請",
+    "submitDesc": "您將質押 {{amount}} USDT 提交此仲裁申請。如果仲裁結果不支持您的主張，押金將被沒收。確定要繼續嗎？",
+    "submitConfirm": "確認提交",
+    "successTitle": "仲裁申請提交成功",
+    "successDesc": "您的仲裁申請已成功提交，仲裁委員會將進行裁決。",
+    "viewDetails": "查看詳情"
+  },
+  "votePanel": {
+    "caseFinished": "該案件已完成裁決",
+    "votedSupport": "您已投票：支持爭議方",
+    "votedOppose": "您已投票：反對爭議方",
+    "voteSubmitted": "投票已提交，不可更改",
+    "voteWarning": "投票後不可更改，請謹慎決策",
+    "supportChallenger": "支持爭議方",
+    "opposeChallenger": "反對爭議方",
+    "supportDesc": "支持：認可爭議方的主張，改判結果",
+    "opposeDesc": "反對：駁回爭議，維持原判",
+    "confirmSupport": "確認支持爭議方",
+    "confirmOppose": "確認反對爭議方",
+    "confirmSupportDesc": "您將投票支持爭議方的主張。如果通過，將修改市場結果。此操作不可撤銷，確定要繼續嗎？",
+    "confirmOpposeDesc": "您將投票反對爭議方的主張。如果駁回，將維持原判。此操作不可撤銷，確定要繼續嗎？",
+    "confirmVote": "確認投票"
+  },
+  "voteProgress": {
+    "support": "支持",
+    "oppose": "反對",
+    "pending": "待投",
+    "passRequired": "通過需要",
+    "disputePassed": "爭議通過：結果已改判",
+    "disputeRejected": "爭議駁回：維持原判"
+  },
+  "arbitratorList": {
+    "unknownMember": "未知委員",
+    "support": "支持",
+    "oppose": "反對",
+    "pendingVote": "待投票"
+  },
+  "resolutionCard": {
+    "proposer": "提案人",
+    "challengeDeadline": "挑戰截止",
+    "challenger": "爭議方",
+    "viewDetails": "查看詳情"
+  },
+  "disputeCard": {
+    "completed": "已完成",
+    "pendingVote": "待投票",
+    "outcomeDispute": "結果仲裁",
+    "ruleDispute": "規則仲裁",
+    "challenger": "爭議方",
+    "originalProposal": "原提案",
+    "claimedOutcome": "主張結果",
+    "submitTime": "提交時間",
+    "voteProgress": "投票進度",
+    "viewDetails": "查看詳情"
+  },
+  "timeline": {
+    "proposal": "結果提案",
+    "challengeWindow": "挑戰窗口",
+    "challengeFiled": "仲裁申請",
+    "arbitrationVoting": "仲裁投票",
+    "arbitrationComplete": "仲裁完成",
+    "resolved": "已生效",
+    "marketInvalid": "市場作廢",
+    "autoConfirm": "自動確認",
+    "awaitingConfirm": "等待確認",
+    "awaitingRuling": "等待裁決"
+  },
+  "txHash": "交易哈希"
+}

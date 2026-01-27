@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { Arbitration } from '@/types';
 
@@ -7,6 +8,7 @@ interface VoteProgressProps {
 }
 
 export function VoteProgress({ arbitration, className }: VoteProgressProps) {
+  const { t } = useTranslation();
   const { yesVotes, noVotes, totalArbitrators } = arbitration;
   const votedCount = yesVotes + noVotes;
   const pendingCount = totalArbitrators - votedCount;
@@ -17,7 +19,6 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
   // 判断是否通过（2/3多数）
   const threshold = Math.ceil((totalArbitrators * 2) / 3);
   const passed = yesVotes >= threshold;
-  const rejected = noVotes > totalArbitrators - threshold;
 
   return (
     <div className={cn('space-y-3', className)}>
@@ -40,20 +41,20 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            <span className="text-emerald-400">支持 {yesVotes}</span>
+            <span className="text-emerald-400">{t('voteProgress.support')} {yesVotes}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
-            <span className="text-red-400">反对 {noVotes}</span>
+            <span className="text-red-400">{t('voteProgress.oppose')} {noVotes}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />
-            <span className="text-muted-foreground">待投 {pendingCount}</span>
+            <span className="text-muted-foreground">{t('voteProgress.pending')} {pendingCount}</span>
           </span>
         </div>
 
         <span className="text-muted-foreground">
-          通过需要 {threshold}/{totalArbitrators} 票
+          {t('voteProgress.passRequired')} {threshold}/{totalArbitrators}
         </span>
       </div>
 
@@ -68,8 +69,8 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
           )}
         >
           {passed
-            ? '争议通过：结果已改判'
-            : '争议驳回：维持原判'}
+            ? t('voteProgress.disputePassed')
+            : t('voteProgress.disputeRejected')}
         </div>
       )}
     </div>

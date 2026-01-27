@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { Check, X, AlertTriangle } from 'lucide-react';
@@ -16,6 +17,7 @@ export function VotePanel({
   finalized,
   onVote,
 }: VotePanelProps) {
+  const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [pendingVote, setPendingVote] = useState<boolean | null>(null);
 
@@ -35,7 +37,7 @@ export function VotePanel({
   if (finalized) {
     return (
       <div className="rounded-lg border border-muted-foreground/20 bg-muted/10 p-4 text-center">
-        <p className="text-muted-foreground">该案件已完成裁决</p>
+        <p className="text-muted-foreground">{t('votePanel.caseFinished')}</p>
       </div>
     );
   }
@@ -54,20 +56,20 @@ export function VotePanel({
             <>
               <Check className="h-5 w-5 text-emerald-400" />
               <span className="font-medium text-emerald-400">
-                您已投票：支持争议方
+                {t('votePanel.votedSupport')}
               </span>
             </>
           ) : (
             <>
               <X className="h-5 w-5 text-red-400" />
               <span className="font-medium text-red-400">
-                您已投票：反对争议方
+                {t('votePanel.votedOppose')}
               </span>
             </>
           )}
         </div>
         <p className="mt-2 text-center text-sm text-muted-foreground">
-          投票已提交，不可更改
+          {t('votePanel.voteSubmitted')}
         </p>
       </div>
     );
@@ -79,7 +81,7 @@ export function VotePanel({
         <div className="rounded-lg border border-orange-500/30 bg-orange-500/10 p-3">
           <div className="flex items-center gap-2 text-sm text-orange-400">
             <AlertTriangle className="h-4 w-4" />
-            <span>投票后不可更改，请谨慎决策</span>
+            <span>{t('votePanel.voteWarning')}</span>
           </div>
         </div>
 
@@ -90,7 +92,7 @@ export function VotePanel({
             onClick={() => handleVoteClick(true)}
           >
             <Check className="h-5 w-5" />
-            支持争议方
+            {t('votePanel.supportChallenger')}
           </Button>
           <Button
             size="lg"
@@ -99,26 +101,26 @@ export function VotePanel({
             onClick={() => handleVoteClick(false)}
           >
             <X className="h-5 w-5" />
-            反对争议方
+            {t('votePanel.opposeChallenger')}
           </Button>
         </div>
 
         <div className="text-center text-xs text-muted-foreground">
-          <p>支持：认可争议方的主张，改判结果</p>
-          <p>反对：驳回争议，维持原判</p>
+          <p>{t('votePanel.supportDesc')}</p>
+          <p>{t('votePanel.opposeDesc')}</p>
         </div>
       </div>
 
       <ConfirmDialog
         open={showConfirm}
         onOpenChange={setShowConfirm}
-        title={pendingVote ? '确认支持争议方' : '确认反对争议方'}
+        title={pendingVote ? t('votePanel.confirmSupport') : t('votePanel.confirmOppose')}
         description={
           pendingVote
-            ? '您将投票支持争议方的主张。如果通过，将修改市场结果。此操作不可撤销，确定要继续吗？'
-            : '您将投票反对争议方的主张。如果驳回，将维持原判。此操作不可撤销，确定要继续吗？'
+            ? t('votePanel.confirmSupportDesc')
+            : t('votePanel.confirmOpposeDesc')
         }
-        confirmText="确认投票"
+        confirmText={t('votePanel.confirmVote')}
         onConfirm={handleConfirm}
         variant={pendingVote ? 'default' : 'destructive'}
       />

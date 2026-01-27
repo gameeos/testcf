@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AddressDisplay } from '@/components/shared/address-display';
@@ -11,6 +12,7 @@ interface ArbitratorListProps {
 }
 
 export function ArbitratorList({ arbitration, className }: ArbitratorListProps) {
+  const { t } = useTranslation();
   const { votes, totalArbitrators } = arbitration;
 
   // 构建委员投票状态
@@ -45,7 +47,7 @@ export function ArbitratorList({ arbitration, className }: ArbitratorListProps) 
             </Avatar>
             <div>
               <div className="text-sm font-medium text-foreground">
-                {arbitrator.name || '未知委员'}
+                {arbitrator.name || t('arbitratorList.unknownMember')}
               </div>
               <AddressDisplay
                 address={arbitrator.address}
@@ -61,19 +63,19 @@ export function ArbitratorList({ arbitration, className }: ArbitratorListProps) 
                 {arbitrator.vote.support ? (
                   <span className="flex items-center gap-1 text-sm text-emerald-400">
                     <Check className="h-4 w-4" />
-                    支持
+                    {t('arbitratorList.support')}
                   </span>
                 ) : (
                   <span className="flex items-center gap-1 text-sm text-red-400">
                     <X className="h-4 w-4" />
-                    反对
+                    {t('arbitratorList.oppose')}
                   </span>
                 )}
               </>
             ) : (
               <span className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Clock className="h-4 w-4" />
-                待投票
+                {t('arbitratorList.pendingVote')}
               </span>
             )}
           </div>

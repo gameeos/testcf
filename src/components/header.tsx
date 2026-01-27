@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { Search, Sun, Moon, ChevronDown, Globe, Shield } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Search, Sun, Moon, Monitor, ChevronDown, Globe, Shield, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -9,25 +10,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { isArbitrator, currentUserAddress } from "@/data/mock-data";
+import { useTheme } from "@/components/theme-provider";
 
-const navItems = [
-  { label: "提案列表", href: "/resolutions" },
-  { label: "申请仲裁", href: "/challenge/new" },
-  { label: "仲裁管理", href: "/arbitration", requireArbitrator: true },
+const languages = [
+  { code: "en", label: "English" },
+  { code: "zh-TW", label: "繁體中文" },
 ];
 
 export function Header() {
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const { theme, setTheme } = useTheme();
   const userIsArbitrator = isArbitrator(currentUserAddress);
+
+  const navItems = [
+    { label: t("nav.resolutions"), href: "/resolutions" },
+    { label: t("nav.challenge"), href: "/challenge/new" },
+    { label: t("nav.arbitration"), href: "/arbitration", requireArbitrator: true },
+  ];
 
   // 过滤导航项（仲裁管理仅委员可见）
   const filteredNavItems = navItems.filter(
     (item) => !item.requireArbitrator || userIsArbitrator
   );
 
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("language", lng);
+  };
+
+  const currentLanguage = languages.find((l) => l.code === i18n.language) || languages[0];
+
   return (
     <header className="w-full pt-8">
-      <div className="mx-auto max-w-7xl bg-[#2B313F] rounded-[45px] px-3">
+      <div className="mx-auto max-w-7xl bg-card rounded-[45px] px-3 border border-border">
         <div className="flex h-16 items-center justify-between">
           {/* Left Section: Logo + Navigation */}
           <div className="flex items-center gap-8">
@@ -50,8 +66,8 @@ export function Header() {
                     to={item.href}
                     className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1.5 ${
                       isActive
-                        ? "text-white"
-                        : "text-gray-400 hover:text-white"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
                     {item.requireArbitrator && (
@@ -68,54 +84,110 @@ export function Header() {
           <div className="flex items-center gap-3">
             {/* Search */}
             <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search..."
-                className="w-32 lg:w-40 pl-9 h-9 bg-[#222733] border-transparent text-white placeholder:text-gray-400 rounded-full focus-visible:ring-0 focus-visible:border-transparent"
+                placeholder={t("header.search")}
+                className="w-32 lg:w-40 pl-9 h-9 bg-secondary border-transparent text-foreground placeholder:text-muted-foreground rounded-full focus-visible:ring-0 focus-visible:border-transparent"
               />
             </div>
 
             {/* Theme Toggle */}
-            <div className="flex items-center bg-[#222733] rounded-full p-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full text-gray-400 hover:text-white hover:bg-transparent"
-              >
-                <Sun className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 rounded-full bg-emerald-500 text-white hover:bg-emerald-600"
-              >
-                <Moon className="h-4 w-4" />
-              </Button>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 bg-secondary rounded-full text-muted-foreground hover:text-foreground hover:bg-accent"
+                >
+                  {theme === "light" && <Sun className="h-4 w-4" />}
+                  {theme === "dark" && <Moon className="h-4 w-4" />}
+                  {theme === "system" && <Monitor className="h-4 w-4" />}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-32">
+                <DropdownMenuItem
+                  onClick={() => setTheme("light")}
+                  className="flex items-center justify-between"
+                >
+                  <span className="flex items-center gap-2">
+                    <Sun className="h-4 w-4" />
+                    {t("theme.light")}
+                  </span>
+                  {theme === "light" && <Check className="h-4 w-4 text-emerald-500" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setTheme("dark")}
+                  className="flex items-center justify-between"
+                >
+                  <span className="flex items-center gap-2">
+                    <Moon className="h-4 w-4" />
+                    {t("theme.dark")}
+                  </span>
+                  {theme === "dark" && <Check className="h-4 w-4 text-emerald-500" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setTheme("system")}
+                  className="flex items-center justify-between"
+                >
+                  <span className="flex items-center gap-2">
+                    <Monitor className="h-4 w-4" />
+                    {t("theme.system")}
+                  </span>
+                  {theme === "system" && <Check className="h-4 w-4 text-emerald-500" />}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Language Selector */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2 px-3 h-9 bg-secondary rounded-full text-foreground hover:bg-accent"
+                >
+                  <Globe className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">{currentLanguage.label}</span>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-36">
+                {languages.map((lang) => (
+                  <DropdownMenuItem
+                    key={lang.code}
+                    onClick={() => changeLanguage(lang.code)}
+                    className="flex items-center justify-between"
+                  >
+                    {lang.label}
+                    {i18n.language === lang.code && (
+                      <Check className="h-4 w-4 text-emerald-500" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="flex items-center gap-2 px-3 h-9 bg-[#222733] rounded-full text-white hover:bg-[#2a3142] hover:text-white"
+                  className="flex items-center gap-2 px-3 h-9 bg-secondary rounded-full text-foreground hover:bg-accent"
                 >
-                  <Globe className="h-4 w-4 text-gray-400" />
                   <span className="text-sm font-medium">EH</span>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Sign out</DropdownMenuItem>
+                <DropdownMenuItem>{t("header.profile")}</DropdownMenuItem>
+                <DropdownMenuItem>{t("header.settings")}</DropdownMenuItem>
+                <DropdownMenuItem>{t("header.signOut")}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             {/* Login Button */}
             <Button className="h-9 px-6 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full font-medium">
-              Log in
+              {t("header.login")}
             </Button>
           </div>
         </div>

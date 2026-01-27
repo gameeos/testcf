@@ -1,0 +1,232 @@
+{
+  "nav": {
+    "resolutions": "Resolutions",
+    "challenge": "File Challenge",
+    "arbitration": "Arbitration"
+  },
+  "header": {
+    "search": "Search...",
+    "profile": "Profile",
+    "settings": "Settings",
+    "signOut": "Sign out",
+    "login": "Log in"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "en": "English",
+    "zhTW": "繁體中文"
+  },
+  "common": {
+    "all": "All",
+    "viewDetails": "View Details",
+    "back": "Back",
+    "backToList": "Back to List",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "yes": "YES",
+    "no": "NO"
+  },
+  "status": {
+    "unresolved": "Unresolved",
+    "proposed": "Challenge Period",
+    "challenged": "In Arbitration",
+    "resolved": "Resolved",
+    "invalid": "Invalid",
+    "arbitrated": "Arbitrated"
+  },
+  "resolutions": {
+    "title": "Resolutions",
+    "subtitle": "View all market resolution proposals, file challenges during the challenge period",
+    "filterAll": "All",
+    "filterProposed": "Challenge Period",
+    "filterChallenged": "In Arbitration",
+    "filterResolved": "Resolved",
+    "filterInvalid": "Invalid",
+    "empty": "No Resolutions",
+    "emptyDesc": "No resolutions found for the current filter",
+    "viewAll": "View All"
+  },
+  "resolution": {
+    "notFound": "Resolution Not Found",
+    "notFoundDesc": "The specified resolution record could not be found",
+    "marketInfo": "Market Information",
+    "settlementRules": "Settlement Rules",
+    "marketEndTime": "Market End Time",
+    "proposalStatus": "Proposal Status",
+    "proposedOutcome": "Proposed Outcome",
+    "proposer": "Proposer",
+    "proposeTime": "Proposal Time",
+    "challengeDeadline": "Challenge Deadline",
+    "bondAmount": "Bond Amount",
+    "processTimeline": "Process Timeline",
+    "applyArbitration": "File Challenge",
+    "applyArbitrationDesc": "You can file a challenge against this proposal during the challenge period",
+    "remainingTime": "Remaining Time:",
+    "requiredBond": "Required Bond:"
+  },
+  "dispute": {
+    "info": "Dispute Information",
+    "type": "Dispute Type",
+    "typeOutcome": "Outcome Dispute",
+    "typeRule": "Rule Dispute",
+    "claimedOutcome": "Claimed Outcome",
+    "challenger": "Challenger",
+    "disputeTime": "Dispute Time",
+    "reason": "Dispute Reason",
+    "evidence": "Evidence Materials"
+  },
+  "arbitration": {
+    "voting": "Arbitration Voting",
+    "votingDesc": "Committee voting progress - requires 2/3 majority to pass",
+    "caseNotFound": "Case Not Found",
+    "caseNotFoundDesc": "The specified arbitration case could not be found",
+    "originalProposal": "Original Proposal",
+    "challengerClaim": "Challenger's Claim",
+    "proposalResult": "Proposal Result",
+    "claimedResult": "Claimed Result",
+    "disputeReason": "Dispute Reason",
+    "disputeTypeLabel": "Dispute Type:",
+    "votingRules": "Voting Rules",
+    "currentArbitrators": "Current Arbitrators:",
+    "requiredToPass": "Required to Pass:",
+    "votes": "votes",
+    "majority": "2/3 majority",
+    "ifNotMet": "If Not Met:",
+    "maintainOriginal": "Maintain Original",
+    "voteStatus": "Vote Status",
+    "myVote": "My Vote",
+    "myVoteDesc": "As an arbitration committee member, please make a fair ruling based on evidence and rules",
+    "notArbitrator": "You are not an arbitration committee member and cannot participate in voting",
+    "finished": "Completed",
+    "inProgress": "In Progress"
+  },
+  "arbitrationDashboard": {
+    "title": "Arbitration Dashboard",
+    "subtitle": "View and handle pending arbitration cases",
+    "arbitrator": "Arbitration Committee",
+    "notArbitrator": "Not a Committee Member",
+    "pending": "Pending",
+    "completed": "Completed",
+    "myVotes": "My Votes",
+    "noPendingCases": "No Pending Cases",
+    "noPendingCasesDesc": "There are no arbitration cases to process",
+    "noCompletedCases": "No Completed Cases",
+    "noCompletedCasesDesc": "There are no completed arbitration records",
+    "noVoteRecords": "No Vote Records",
+    "noVoteRecordsDesc": "You haven't participated in any arbitration votes"
+  },
+  "challenge": {
+    "title": "File Challenge",
+    "subtitle": "File a challenge for Resolution #{{id}}",
+    "notFound": "Resolution Not Found",
+    "notFoundDesc": "Please file a challenge from the resolution details page",
+    "windowClosed": "Challenge Window Closed",
+    "windowClosedDesc": "This resolution has exceeded the challenge period",
+    "backToDetails": "Back to Details",
+    "targetMarket": "Target Market",
+    "currentProposal": "Current Proposal",
+    "form": {
+      "title": "Challenge Application",
+      "subtitle": "Fill in your challenge reason and evidence",
+      "disputeType": "Dispute Type",
+      "outcomeDispute": "Outcome Dispute",
+      "ruleDispute": "Rule Dispute",
+      "outcomeDisputeDesc": "Challenge the market outcome, claiming the proposal result is incorrect",
+      "ruleDisputeDesc": "Challenge the market rules, claiming the rules are unreasonable or undeterminable",
+      "correctOutcome": "The Correct Outcome (Your Claim)",
+      "reason": "Challenge Reason",
+      "reasonRequired": "required",
+      "reasonPlaceholder": "Please describe your challenge reason in detail...",
+      "reasonHint": "Please provide clear and specific reasons explaining why the current proposal result is incorrect",
+      "evidenceUrls": "Authoritative Source Links",
+      "addLink": "Add Link",
+      "uploadFiles": "Upload Files (Optional)",
+      "uploadButton": "Upload File",
+      "supportedFormats": "Supports images and PDF formats",
+      "txHash": "On-chain Tx Hash (Optional)"
+    },
+    "submitApplication": "Submit Application"
+  },
+  "bondWarning": {
+    "title": "Bond Notice",
+    "description": "Filing a challenge requires a bond of",
+    "win": "Win",
+    "winResult": "Full refund of bond",
+    "lose": "Lose",
+    "loseResult": "Bond forfeited to platform treasury"
+  },
+  "confirmDialog": {
+    "submitTitle": "Confirm Challenge Submission",
+    "submitDesc": "You will stake {{amount}} USDT to submit this challenge. If the arbitration result does not support your claim, the bond will be forfeited. Are you sure you want to continue?",
+    "submitConfirm": "Confirm Submit",
+    "successTitle": "Challenge Submitted Successfully",
+    "successDesc": "Your challenge has been successfully submitted. The arbitration committee will make a ruling.",
+    "viewDetails": "View Details"
+  },
+  "votePanel": {
+    "caseFinished": "This case has been resolved",
+    "votedSupport": "You voted: Support Challenger",
+    "votedOppose": "You voted: Oppose Challenger",
+    "voteSubmitted": "Vote submitted, cannot be changed",
+    "voteWarning": "Votes cannot be changed, please decide carefully",
+    "supportChallenger": "Support Challenger",
+    "opposeChallenger": "Oppose Challenger",
+    "supportDesc": "Support: Approve challenger's claim, change the result",
+    "opposeDesc": "Oppose: Reject challenge, maintain original ruling",
+    "confirmSupport": "Confirm Support Challenger",
+    "confirmOppose": "Confirm Oppose Challenger",
+    "confirmSupportDesc": "You will vote to support the challenger's claim. If passed, the market result will be changed. This action is irreversible, are you sure you want to continue?",
+    "confirmOpposeDesc": "You will vote to oppose the challenger's claim. If rejected, the original ruling will be maintained. This action is irreversible, are you sure you want to continue?",
+    "confirmVote": "Confirm Vote"
+  },
+  "voteProgress": {
+    "support": "Support",
+    "oppose": "Oppose",
+    "pending": "Pending",
+    "passRequired": "Required to pass",
+    "disputePassed": "Dispute Passed: Result Changed",
+    "disputeRejected": "Dispute Rejected: Original Maintained"
+  },
+  "arbitratorList": {
+    "unknownMember": "Unknown Member",
+    "support": "Support",
+    "oppose": "Oppose",
+    "pendingVote": "Pending"
+  },
+  "resolutionCard": {
+    "proposer": "Proposer",
+    "challengeDeadline": "Challenge Deadline",
+    "challenger": "Challenger",
+    "viewDetails": "View Details"
+  },
+  "disputeCard": {
+    "completed": "Completed",
+    "pendingVote": "Pending Vote",
+    "outcomeDispute": "Outcome Dispute",
+    "ruleDispute": "Rule Dispute",
+    "challenger": "Challenger",
+    "originalProposal": "Original Proposal",
+    "claimedOutcome": "Claimed Outcome",
+    "submitTime": "Submit Time",
+    "voteProgress": "Vote Progress",
+    "viewDetails": "View Details"
+  },
+  "timeline": {
+    "proposal": "Proposal",
+    "challengeWindow": "Challenge Window",
+    "challengeFiled": "Challenge Filed",
+    "arbitrationVoting": "Arbitration Voting",
+    "arbitrationComplete": "Arbitration Complete",
+    "resolved": "Resolved",
+    "marketInvalid": "Market Invalid",
+    "autoConfirm": "Auto Confirm",
+    "awaitingConfirm": "Awaiting Confirm",
+    "awaitingRuling": "Awaiting Ruling"
+  },
+  "txHash": "Transaction Hash"
+}

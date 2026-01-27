@@ -1,6 +1,7 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { Resolution } from '@/types';
-import { Check, Circle, Clock, AlertTriangle, XCircle } from 'lucide-react';
+import { Check, Circle, Clock, XCircle } from 'lucide-react';
 
 interface ResolutionTimelineProps {
   resolution: Resolution;
@@ -8,7 +9,7 @@ interface ResolutionTimelineProps {
 }
 
 type TimelineStep = {
-  label: string;
+  labelKey: string;
   status: 'completed' | 'current' | 'pending' | 'skipped';
   timestamp?: number;
 };
@@ -18,7 +19,7 @@ function getTimelineSteps(resolution: Resolution): TimelineStep[] {
 
   // 1. 提案
   steps.push({
-    label: '结果提案',
+    labelKey: 'timeline.proposal',
     status: 'completed',
     timestamp: resolution.proposeTime,
   });
@@ -31,19 +32,19 @@ function getTimelineSteps(resolution: Resolution): TimelineStep[] {
 
   if (resolution.status === 'Proposed') {
     steps.push({
-      label: '挑战窗口',
+      labelKey: 'timeline.challengeWindow',
       status: inChallengeWindow ? 'current' : 'completed',
       timestamp: resolution.challengeDeadline,
     });
   } else if (resolution.dispute) {
     steps.push({
-      label: '挑战窗口',
+      labelKey: 'timeline.challengeWindow',
       status: 'completed',
       timestamp: resolution.challengeDeadline,
     });
   } else {
     steps.push({
-      label: '挑战窗口',
+      labelKey: 'timeline.challengeWindow',
       status: 'completed',
       timestamp: resolution.challengeDeadline,
     });
@@ -52,7 +53,7 @@ function getTimelineSteps(resolution: Resolution): TimelineStep[] {
   // 3. 仲裁申请（如有）
   if (resolution.dispute) {
     steps.push({
-      label: '仲裁申请',
+      labelKey: 'timeline.challengeFiled',
       status: 'completed',
       timestamp: resolution.dispute.disputeTime,
     });
@@ -61,7 +62,7 @@ function getTimelineSteps(resolution: Resolution): TimelineStep[] {
     if (resolution.arbitration) {
       const arbitrationFinalized = resolution.arbitration.finalized;
       steps.push({
-        label: '仲裁投票',
+        labelKey: 'timeline.arbitrationVoting',
         status: arbitrationFinalized ? 'completed' : 'current',
         timestamp: resolution.arbitration.startTime,
       });
@@ -71,27 +72,27 @@ function getTimelineSteps(resolution: Resolution): TimelineStep[] {
   // 5. 最终结算
   if (resolution.status === 'Resolved') {
     steps.push({
-      label: resolution.arbitration?.finalized ? '仲裁完成' : '已生效',
+      labelKey: resolution.arbitration?.finalized ? 'timeline.arbitrationComplete' : 'timeline.resolved',
       status: 'completed',
     });
   } else if (resolution.status === 'Invalid') {
     steps.push({
-      label: '市场作废',
+      labelKey: 'timeline.marketInvalid',
       status: 'completed',
     });
   } else if (resolution.status === 'Proposed' && !inChallengeWindow) {
     steps.push({
-      label: '自动确认',
+      labelKey: 'timeline.autoConfirm',
       status: 'pending',
     });
   } else if (!resolution.dispute) {
     steps.push({
-      label: '等待确认',
+      labelKey: 'timeline.awaitingConfirm',
       status: 'pending',
     });
   } else {
     steps.push({
-      label: '等待裁决',
+      labelKey: 'timeline.awaitingRuling',
       status: 'pending',
     });
   }
@@ -112,21 +113,23 @@ function getStepIcon(status: TimelineStep['status']) {
   }
 }
 
-function formatTimestamp(timestamp?: number) {
-  if (!timestamp) return '';
-  return new Date(timestamp).toLocaleString('zh-CN', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
 export function ResolutionTimeline({
   resolution,
   className,
 }: ResolutionTimelineProps) {
+  const { t, i18n } = useTranslation();
   const steps = getTimelineSteps(resolution);
+
+  const formatTimestamp = (timestamp?: number) => {
+    if (!timestamp) return '';
+    const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
+    return new Date(timestamp).toLocaleString(locale, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   return (
     <div className={cn('', className)}>
@@ -159,7 +162,7 @@ export function ResolutionTimeline({
                   step.status === 'skipped' && 'text-red-400'
                 )}
               >
-                {step.label}
+                {t(step.labelKey)}
               </span>
               {step.timestamp && (
                 <span className="mt-0.5 text-[10px] text-muted-foreground">

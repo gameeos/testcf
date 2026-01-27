@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   CardContent,
@@ -16,6 +17,8 @@ interface DisputeCardProps {
 }
 
 export function DisputeCard({ resolution }: DisputeCardProps) {
+  const { t, i18n } = useTranslation();
+
   if (!resolution.dispute || !resolution.arbitration) {
     return null;
   }
@@ -25,7 +28,8 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
   const pendingCount = arbitration.totalArbitrators - votedCount;
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('zh-CN', {
+    const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
+    return new Date(timestamp).toLocaleString(locale, {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
@@ -45,10 +49,10 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
                 : 'border-orange-500/50 bg-orange-500/10 text-orange-400'
             }
           >
-            {arbitration.finalized ? '已完成' : '待投票'}
+            {arbitration.finalized ? t('disputeCard.completed') : t('disputeCard.pendingVote')}
           </Badge>
           <Badge variant="outline">
-            {dispute.disputeType === 'Outcome' ? '结果仲裁' : '规则仲裁'}
+            {dispute.disputeType === 'Outcome' ? t('disputeCard.outcomeDispute') : t('disputeCard.ruleDispute')}
           </Badge>
         </div>
         <div className="space-y-1">
@@ -66,11 +70,11 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
       <CardContent className="flex-1 space-y-3">
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">争议方</span>
+            <span className="text-muted-foreground">{t('disputeCard.challenger')}</span>
             <AddressDisplay address={dispute.challenger} chars={4} />
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">原提案</span>
+            <span className="text-muted-foreground">{t('disputeCard.originalProposal')}</span>
             <Badge
               variant="outline"
               className={
@@ -83,7 +87,7 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
             </Badge>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">主张结果</span>
+            <span className="text-muted-foreground">{t('disputeCard.claimedOutcome')}</span>
             <Badge
               variant="outline"
               className={
@@ -98,7 +102,7 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1 text-muted-foreground">
               <Clock className="h-3.5 w-3.5" />
-              提交时间
+              {t('disputeCard.submitTime')}
             </span>
             <span className="text-foreground">
               {formatTime(dispute.disputeTime)}
@@ -111,7 +115,7 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-1.5 text-muted-foreground">
               <Gavel className="h-3.5 w-3.5" />
-              投票进度
+              {t('disputeCard.voteProgress')}
             </span>
             <span className="text-foreground">
               {votedCount}/{arbitration.totalArbitrators}
@@ -137,7 +141,7 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
       <CardFooter>
         <Button variant="outline" className="w-full" asChild>
           <Link to={`/arbitration/${dispute.id}`}>
-            查看详情
+            {t('disputeCard.viewDetails')}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>

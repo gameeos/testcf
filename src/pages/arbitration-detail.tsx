@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout/page-layout';
 import {
   Card,
@@ -35,6 +36,7 @@ import {
 export function ArbitrationDetailPage() {
   const { disputeId } = useParams<{ disputeId: string }>();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const resolution = disputeId
     ? getResolutionByDisputeId(disputeId)
@@ -64,11 +66,11 @@ export function ArbitrationDetailPage() {
     return (
       <PageLayout>
         <EmptyState
-          title="案件不存在"
-          description="找不到指定的仲裁案件"
+          title={t('arbitration.caseNotFound')}
+          description={t('arbitration.caseNotFoundDesc')}
           action={
             <Button variant="outline" onClick={() => navigate('/arbitration')}>
-              返回列表
+              {t('common.backToList')}
             </Button>
           }
         />
@@ -80,7 +82,8 @@ export function ArbitrationDetailPage() {
   const threshold = Math.ceil((arbitration.totalArbitrators * 2) / 3);
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('zh-CN', {
+    const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
+    return new Date(timestamp).toLocaleString(locale, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -116,7 +119,7 @@ export function ArbitrationDetailPage() {
                     : 'border-orange-500/50 bg-orange-500/10 text-orange-400'
                 }
               >
-                {arbitration.finalized ? '已完成' : '仲裁中'}
+                {arbitration.finalized ? t('arbitration.finished') : t('arbitration.inProgress')}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
@@ -132,12 +135,12 @@ export function ArbitrationDetailPage() {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <FileText className="h-4 w-4" />
-                原始提案
+                {t('arbitration.originalProposal')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">提案结果</span>
+                <span className="text-sm text-muted-foreground">{t('arbitration.proposalResult')}</span>
                 <Badge
                   variant="outline"
                   className={
@@ -150,11 +153,11 @@ export function ArbitrationDetailPage() {
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">提案人</span>
+                <span className="text-sm text-muted-foreground">{t('resolution.proposer')}</span>
                 <AddressDisplay address={resolution.proposer} chars={4} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">提案时间</span>
+                <span className="text-sm text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
                   {formatTime(resolution.proposeTime)}
                 </span>
@@ -167,12 +170,12 @@ export function ArbitrationDetailPage() {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base text-orange-400">
                 <Scale className="h-4 w-4" />
-                争议方主张
+                {t('arbitration.challengerClaim')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">主张结果</span>
+                <span className="text-sm text-muted-foreground">{t('arbitration.claimedResult')}</span>
                 <Badge
                   variant="outline"
                   className={
@@ -185,11 +188,11 @@ export function ArbitrationDetailPage() {
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">争议方</span>
+                <span className="text-sm text-muted-foreground">{t('dispute.challenger')}</span>
                 <AddressDisplay address={dispute.challenger} chars={4} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">争议时间</span>
+                <span className="text-sm text-muted-foreground">{t('dispute.disputeTime')}</span>
                 <span className="text-sm text-foreground">
                   {formatTime(dispute.disputeTime)}
                 </span>
@@ -201,7 +204,7 @@ export function ArbitrationDetailPage() {
         {/* 市场信息 */}
         <Card className="bg-card/50">
           <CardHeader>
-            <CardTitle className="text-base">市场信息</CardTitle>
+            <CardTitle className="text-base">{t('resolution.marketInfo')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <h3 className="font-medium text-foreground">
@@ -212,7 +215,7 @@ export function ArbitrationDetailPage() {
             </p>
             <Separator />
             <div>
-              <span className="text-sm text-muted-foreground">结算规则</span>
+              <span className="text-sm text-muted-foreground">{t('resolution.settlementRules')}</span>
               <p className="mt-1 text-sm text-foreground">
                 {resolution.market.rules}
               </p>
@@ -223,10 +226,10 @@ export function ArbitrationDetailPage() {
         {/* 争议理由和证据 */}
         <Card className="bg-card/50">
           <CardHeader>
-            <CardTitle className="text-base">争议理由</CardTitle>
+            <CardTitle className="text-base">{t('arbitration.disputeReason')}</CardTitle>
             <CardDescription>
-              争议类型：
-              {dispute.disputeType === 'Outcome' ? '结果仲裁' : '规则仲裁'}
+              {t('arbitration.disputeTypeLabel')}
+              {dispute.disputeType === 'Outcome' ? t('dispute.typeOutcome') : t('dispute.typeRule')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -240,7 +243,7 @@ export function ArbitrationDetailPage() {
                 <Separator />
                 <div className="space-y-2">
                   <span className="text-sm font-medium text-foreground">
-                    证据材料
+                    {t('dispute.evidence')}
                   </span>
                   <div className="space-y-2">
                     {dispute.evidenceUrls.map((url, index) => (
@@ -274,7 +277,7 @@ export function ArbitrationDetailPage() {
                 <Separator />
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    交易哈希
+                    {t('txHash')}
                   </span>
                   <code className="rounded bg-muted/20 px-2 py-1 font-mono text-sm text-foreground">
                     {dispute.txHash}
@@ -290,27 +293,27 @@ export function ArbitrationDetailPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-base text-blue-400">
               <Info className="h-4 w-4" />
-              投票规则
+              {t('arbitration.votingRules')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-4 text-sm">
               <div>
-                <span className="text-muted-foreground">当前委员数：</span>
+                <span className="text-muted-foreground">{t('arbitration.currentArbitrators')}</span>
                 <span className="ml-1 font-medium text-foreground">
                   {arbitration.totalArbitrators}
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">通过所需：</span>
+                <span className="text-muted-foreground">{t('arbitration.requiredToPass')}</span>
                 <span className="ml-1 font-medium text-foreground">
-                  {threshold}/{arbitration.totalArbitrators} 票 (2/3 多数)
+                  {threshold}/{arbitration.totalArbitrators} {t('arbitration.votes')} ({t('arbitration.majority')})
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">未达标：</span>
+                <span className="text-muted-foreground">{t('arbitration.ifNotMet')}</span>
                 <span className="ml-1 font-medium text-foreground">
-                  维持原判
+                  {t('arbitration.maintainOriginal')}
                 </span>
               </div>
             </div>
@@ -322,7 +325,7 @@ export function ArbitrationDetailPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Gavel className="h-4 w-4" />
-              投票状态
+              {t('arbitration.voteStatus')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -336,9 +339,9 @@ export function ArbitrationDetailPage() {
         {isUserArbitrator && (
           <Card className="bg-card/50">
             <CardHeader>
-              <CardTitle className="text-base">我的投票</CardTitle>
+              <CardTitle className="text-base">{t('arbitration.myVote')}</CardTitle>
               <CardDescription>
-                作为仲裁委员，请基于证据和规则做出公正裁决
+                {t('arbitration.myVoteDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -357,7 +360,7 @@ export function ArbitrationDetailPage() {
           <Card className="border-muted-foreground/20 bg-muted/10">
             <CardContent className="py-6 text-center">
               <p className="text-muted-foreground">
-                您不是仲裁委员，无法参与投票
+                {t('arbitration.notArbitrator')}
               </p>
             </CardContent>
           </Card>

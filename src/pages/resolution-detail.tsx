@@ -1,4 +1,5 @@
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout/page-layout';
 import {
   Card,
@@ -31,6 +32,7 @@ import {
 export function ResolutionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   const resolution = id ? getResolutionById(id) : undefined;
 
@@ -38,11 +40,11 @@ export function ResolutionDetailPage() {
     return (
       <PageLayout>
         <EmptyState
-          title="提案不存在"
-          description="找不到指定的提案记录"
+          title={t('resolution.notFound')}
+          description={t('resolution.notFoundDesc')}
           action={
             <Button variant="outline" onClick={() => navigate('/resolutions')}>
-              返回列表
+              {t('common.backToList')}
             </Button>
           }
         />
@@ -55,7 +57,8 @@ export function ResolutionDetailPage() {
     resolution.challengeDeadline > Date.now();
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('zh-CN', {
+    const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
+    return new Date(timestamp).toLocaleString(locale, {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -98,7 +101,7 @@ export function ResolutionDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <FileText className="h-4 w-4" />
-                市场信息
+                {t('resolution.marketInfo')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -113,14 +116,14 @@ export function ResolutionDetailPage() {
               <Separator />
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">结算规则</span>
+                  <span className="text-muted-foreground">{t('resolution.settlementRules')}</span>
                 </div>
                 <p className="text-foreground">{resolution.market.rules}</p>
               </div>
               <Separator />
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">市场结束时间</span>
+                  <span className="text-muted-foreground">{t('resolution.marketEndTime')}</span>
                   <span className="text-foreground">
                     {formatTime(resolution.market.endTime)}
                   </span>
@@ -134,12 +137,12 @@ export function ResolutionDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Gavel className="h-4 w-4" />
-                提案状态
+                {t('resolution.proposalStatus')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">提案结果</span>
+                <span className="text-muted-foreground">{t('resolution.proposedOutcome')}</span>
                 <Badge
                   variant="outline"
                   className={
@@ -152,11 +155,11 @@ export function ResolutionDetailPage() {
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">提案人</span>
+                <span className="text-muted-foreground">{t('resolution.proposer')}</span>
                 <AddressDisplay address={resolution.proposer} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">提案时间</span>
+                <span className="text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
                   {formatTime(resolution.proposeTime)}
                 </span>
@@ -165,7 +168,7 @@ export function ResolutionDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1 text-muted-foreground">
                   <Clock className="h-3.5 w-3.5" />
-                  挑战截止
+                  {t('resolution.challengeDeadline')}
                 </span>
                 {isInChallengeWindow ? (
                   <CountdownTimer deadline={resolution.challengeDeadline} />
@@ -176,7 +179,7 @@ export function ResolutionDetailPage() {
                 )}
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">押金金额</span>
+                <span className="text-muted-foreground">{t('resolution.bondAmount')}</span>
                 <span className="text-sm text-foreground">
                   {resolution.bondAmount} USDT
                 </span>
@@ -188,7 +191,7 @@ export function ResolutionDetailPage() {
         {/* 时间线 */}
         <Card className="bg-card/50">
           <CardHeader>
-            <CardTitle className="text-base">流程时间线</CardTitle>
+            <CardTitle className="text-base">{t('resolution.processTimeline')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ResolutionTimeline resolution={resolution} />
@@ -201,29 +204,29 @@ export function ResolutionDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base text-orange-400">
                 <AlertTriangle className="h-4 w-4" />
-                申请仲裁
+                {t('resolution.applyArbitration')}
               </CardTitle>
               <CardDescription>
-                您可以在挑战期内对此提案结果申请仲裁
+                {t('resolution.applyArbitrationDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1 text-sm">
                   <p className="text-muted-foreground">
-                    剩余时间：
+                    {t('resolution.remainingTime')}
                     <CountdownTimer
                       deadline={resolution.challengeDeadline}
                       className="ml-1"
                     />
                   </p>
                   <p className="text-muted-foreground">
-                    需质押：<span className="text-foreground">500 USDT</span>
+                    {t('resolution.requiredBond')}<span className="text-foreground">500 USDT</span>
                   </p>
                 </div>
                 <Button asChild>
                   <Link to={`/challenge/new?resolutionId=${resolution.id}`}>
-                    申请仲裁
+                    {t('resolution.applyArbitration')}
                   </Link>
                 </Button>
               </div>
@@ -237,21 +240,21 @@ export function ResolutionDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <AlertTriangle className="h-4 w-4 text-orange-400" />
-                争议信息
+                {t('dispute.info')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">争议类型</span>
+                  <span className="text-muted-foreground">{t('dispute.type')}</span>
                   <Badge variant="outline">
                     {resolution.dispute.disputeType === 'Outcome'
-                      ? '结果仲裁'
-                      : '规则仲裁'}
+                      ? t('dispute.typeOutcome')
+                      : t('dispute.typeRule')}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">主张结果</span>
+                  <span className="text-muted-foreground">{t('dispute.claimedOutcome')}</span>
                   <Badge
                     variant="outline"
                     className={
@@ -264,11 +267,11 @@ export function ResolutionDetailPage() {
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">争议方</span>
+                  <span className="text-muted-foreground">{t('dispute.challenger')}</span>
                   <AddressDisplay address={resolution.dispute.challenger} />
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">争议时间</span>
+                  <span className="text-muted-foreground">{t('dispute.disputeTime')}</span>
                   <span className="text-sm text-foreground">
                     {formatTime(resolution.dispute.disputeTime)}
                   </span>
@@ -278,7 +281,7 @@ export function ResolutionDetailPage() {
               <Separator />
 
               <div className="space-y-2">
-                <span className="text-sm text-muted-foreground">争议理由</span>
+                <span className="text-sm text-muted-foreground">{t('dispute.reason')}</span>
                 <p className="rounded-lg bg-muted/20 p-3 text-sm text-foreground">
                   {resolution.dispute.reason}
                 </p>
@@ -290,7 +293,7 @@ export function ResolutionDetailPage() {
                   <Separator />
                   <div className="space-y-2">
                     <span className="text-sm text-muted-foreground">
-                      证据材料
+                      {t('dispute.evidence')}
                     </span>
                     <div className="space-y-1">
                       {resolution.dispute.evidenceUrls.map((url, index) => (
@@ -323,7 +326,7 @@ export function ResolutionDetailPage() {
                 <>
                   <Separator />
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">交易哈希</span>
+                    <span className="text-muted-foreground">{t('txHash')}</span>
                     <code className="font-mono text-foreground">
                       {resolution.dispute.txHash}
                     </code>
@@ -340,10 +343,10 @@ export function ResolutionDetailPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Gavel className="h-4 w-4" />
-                仲裁投票
+                {t('arbitration.voting')}
               </CardTitle>
               <CardDescription>
-                委员会投票进度 - 需要 2/3 多数票通过
+                {t('arbitration.votingDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

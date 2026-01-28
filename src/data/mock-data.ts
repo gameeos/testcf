@@ -1,7 +1,5 @@
 import type {
   Resolution,
-  Dispute,
-  Arbitration,
   Arbitrator,
   ArbitrationVote,
 } from '@/types';

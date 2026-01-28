@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Search, Sun, Moon, Monitor, ChevronDown, Globe, Shield, Check, Wallet, LogOut } from "lucide-react";
+import { Search, Sun, Moon, Monitor, ChevronDown, Globe, Check, Wallet, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

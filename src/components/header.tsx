@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Search, Sun, Moon, Monitor, ChevronDown, Globe, Check, Wallet, LogOut } from "lucide-react";
+import { Search, Sun, Moon, Monitor, ChevronDown, Globe, Check, Wallet, LogOut, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,29 +9,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { isArbitrator, currentUserAddress } from "@/data/mock-data";
+import { isArbitrator } from "@/data/mock-data";
 import { useTheme } from "@/components/theme-provider";
+import { useWallet } from "@/lib/use-wallet";
+import { useWeb3ModalTheme } from "@/lib/web3-modal";
 
 const languages = [
   { code: "en", label: "English" },
   { code: "zh-TW", label: "繁體中文" },
 ];
 
-// 格式化钱包地址为 0xAb...cD12 格式
-function formatAddress(address: string): string {
-  if (!address || address.length < 10) return address;
-  return `${address.slice(0, 4)}...${address.slice(-4)}`;
-}
-
 export function Header() {
   const location = useLocation();
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
-  const userIsArbitrator = isArbitrator(currentUserAddress);
+  const {
+    address,
+    displayAddress,
+    isConnected,
+    isConnecting,
+    isDisconnecting,
+    disconnect,
+    openModal
+  } = useWallet();
 
-  // 模拟钱包登录状态
-  const [isConnected, setIsConnected] = useState(false);
-  const [walletAddress] = useState("0xAbCdEf1234567890AbCdEf1234567890AbCdEf12");
+  // 同步 Web3Modal 主题
+  useWeb3ModalTheme();
+
+  const userIsArbitrator = address ? isArbitrator(address) : false;
 
   const navItems = [
     { label: t("nav.resolutions"), href: "/resolutions" },
@@ -186,29 +190,44 @@ export function Header() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
+                    disabled={isDisconnecting}
                     className="flex items-center gap-2 px-3 h-9 bg-secondary rounded-full text-foreground hover:bg-accent"
                   >
                     <Wallet className="h-4 w-4 text-emerald-500" />
-                    <span className="text-sm font-medium">{formatAddress(walletAddress)}</span>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    {isDisconnecting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <span className="text-sm font-medium">{displayAddress}</span>
+                    )}
+                    {!isDisconnecting && <ChevronDown className="h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem
-                    onClick={() => setIsConnected(false)}
+                    onClick={() => disconnect()}
+                    disabled={isDisconnecting}
                     className="flex items-center gap-2 text-red-500 focus:text-red-500"
                   >
-                    <LogOut className="h-4 w-4" />
+                    {isDisconnecting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <LogOut className="h-4 w-4" />
+                    )}
                     {t("header.signOut")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button
-                onClick={() => setIsConnected(true)}
+                onClick={openModal}
+                disabled={isConnecting}
                 className="h-9 px-6 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full font-medium flex items-center gap-2"
               >
-                <Wallet className="h-4 w-4" />
+                {isConnecting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Wallet className="h-4 w-4" />
+                )}
                 {t("header.walletLogin")}
               </Button>
             )}

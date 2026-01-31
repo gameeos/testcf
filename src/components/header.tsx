@@ -13,6 +13,7 @@ import { isArbitrator } from "@/data/mock-data";
 import { useTheme } from "@/components/theme-provider";
 import { useWallet } from "@/lib/use-wallet";
 import { useWeb3ModalTheme } from "@/lib/web3-modal";
+import { useOOA } from "@/lib/use-ooa";
 
 const languages = [
   { code: "en", label: "English" },
@@ -32,11 +33,15 @@ export function Header() {
     disconnect,
     openModal
   } = useWallet();
+  const { isArbitrator: isArbitratorFromContract } = useOOA();
 
   // 同步 Web3Modal 主题
   useWeb3ModalTheme();
 
-  const userIsArbitrator = address ? isArbitrator(address) : false;
+  // 使用合约调用判断是否为仲裁委员，如果合约地址未配置则回退到 mock 数据
+  const userIsArbitrator = address
+    ? (isArbitratorFromContract || isArbitrator(address))
+    : false;
 
   const navItems = [
     { label: t("nav.resolutions"), href: "/resolutions" },

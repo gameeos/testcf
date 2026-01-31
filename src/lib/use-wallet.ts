@@ -1,13 +1,13 @@
 'use client'
 
-import { useAccount, useDisconnect, useEnsName } from 'wagmi'
+import { useConnection, useDisconnect, useEnsName } from 'wagmi'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 
 export function useWallet() {
-  const { address, isConnected, chain } = useAccount()
+  const { address, isConnected, chain } = useConnection()
   const { data: ensName } = useEnsName({ address })
   const { open } = useWeb3Modal()
-  const { disconnect, isPending: isDisconnecting } = useDisconnect()
+  const { mutate, isPending: isDisconnecting } = useDisconnect()
 
   // Format address to short form: 0xAb...cD12
   const formatAddress = (addr?: string): string => {
@@ -31,7 +31,7 @@ export function useWallet() {
     chain,
     isConnecting: false,
     isDisconnecting,
-    disconnect,
+    disconnect: () => mutate(),
     openModal
   }
 }

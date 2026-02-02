@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Search, Sun, Moon, Monitor, ChevronDown, Globe, Check, Wallet, LogOut, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ const languages = [
 
 export function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
   const {
@@ -42,6 +43,19 @@ export function Header() {
   const userIsArbitrator = address
     ? (isArbitratorFromContract || isArbitrator(address))
     : false;
+
+  // 搜索功能
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const searchQuery = formData.get('search') as string;
+
+    if (searchQuery.trim()) {
+      navigate(`/resolutions?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/resolutions');
+    }
+  };
 
   const navItems = [
     { label: t("nav.resolutions"), href: "/resolutions" },
@@ -105,14 +119,15 @@ export function Header() {
           {/* Right Section: Search + Theme + User + Login */}
           <div className="flex items-center gap-3">
             {/* Search */}
-            <div className="relative hidden sm:block">
+            <form onSubmit={handleSearch} className="relative hidden sm:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
+                name="search"
                 type="text"
                 placeholder={t("header.search")}
                 className="w-32 lg:w-40 pl-9 h-9 bg-secondary border-transparent text-foreground placeholder:text-muted-foreground rounded-full focus-visible:ring-0 focus-visible:border-transparent"
               />
-            </div>
+            </form>
 
             {/* Theme Toggle */}
             <DropdownMenu>

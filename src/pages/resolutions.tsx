@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { PageLayout } from '@/components/layout/page-layout';
 import { ResolutionCard } from '@/components/resolution/resolution-card';
 import { EmptyState } from '@/components/shared/empty-state';
@@ -13,10 +14,12 @@ type FilterStatus = 'all' | ResolutionStatus;
 
 export function ResolutionsPage() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || undefined;
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [page, setPage] = useState(1);
   const [allResolutions, setAllResolutions] = useState<Resolution[]>([]);
-  const pageSize = 2;
+  const pageSize = 6;
 
   // 状态映射到后端数字
   const statusMap: Record<ResolutionStatus, number> = {
@@ -31,7 +34,9 @@ export function ResolutionsPage() {
   const { data: resolutions, isLoading, error } = useResolutions(
     page,
     pageSize,
-    filter === 'all' ? undefined : statusMap[filter]
+    filter === 'all' ? undefined : statusMap[filter],
+    undefined,
+    searchQuery
   );
 
   // 当页码为1时（初始加载或切换筛选），重置累积数据
@@ -51,6 +56,11 @@ export function ResolutionsPage() {
     setPage(1);
     setFilter(value as FilterStatus);
   };
+
+  // 当搜索关键词变化时，重置页码
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery]);
 
   const handleLoadMore = () => {
     setPage((prev) => prev + 1);

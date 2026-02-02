@@ -241,5 +241,9 @@
     "awaitingConfirm": "Awaiting Confirm",
     "awaitingRuling": "Awaiting Ruling"
   },
-  "txHash": "Transaction Hash"
+  "txHash": "Transaction Hash",
+  "loading":{
+    "loading":"loading...",
+    "error:":"Loading failed:"
+  }
 }

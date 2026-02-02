@@ -6,7 +6,7 @@ import abi from '@/data/abi/OptimisticOracleArbitration.json'
 import { type Address } from 'viem'
 
 // 合约地址 - 需要根据实际部署情况配置
-const CONTRACT_ADDRESS = '0xA663e933D40A707AbdC0EF4D26B117110955c94A' as Address
+const CONTRACT_ADDRESS = '0xDAb94888b43577eC2D974ffEc5bA56909573e3a5' as Address
 
 // 定义返回类型
 export interface UseOOAReturnType {

@@ -241,5 +241,9 @@
     "awaitingConfirm": "等待確認",
     "awaitingRuling": "等待裁決"
   },
-  "txHash": "交易哈希"
+  "txHash": "交易哈希",
+  "loading":{
+    "loading":"加载中...",
+    "error:":"加载失败:"
+  }
 }

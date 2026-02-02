@@ -5,6 +5,7 @@ import { AddressDisplay } from '@/components/shared/address-display';
 import { mockArbitrators } from '@/data/mock-data';
 import type { Arbitration } from '@/types';
 import { Check, X, Clock } from 'lucide-react';
+import { useOOA } from '@/lib/use-ooa';
 
 interface ArbitratorListProps {
   arbitration: Arbitration;
@@ -13,7 +14,11 @@ interface ArbitratorListProps {
 
 export function ArbitratorList({ arbitration, className }: ArbitratorListProps) {
   const { t } = useTranslation();
-  const { votes, totalArbitrators } = arbitration;
+  const { votes } = arbitration;
+  let { arbitratorCount: totalArbitrators } = useOOA();
+  if (totalArbitrators === 0) {
+    totalArbitrators = 3;
+  }
 
   // 构建委员投票状态
   const arbitratorVotes = mockArbitrators.slice(0, totalArbitrators).map((arbitrator) => {
@@ -32,11 +37,11 @@ export function ArbitratorList({ arbitration, className }: ArbitratorListProps) 
           className={cn(
             'flex items-center justify-between rounded-lg border px-3 py-2',
             arbitrator.vote?.support === true &&
-              'border-emerald-500/30 bg-emerald-500/5',
+            'border-emerald-500/30 bg-emerald-500/5',
             arbitrator.vote?.support === false &&
-              'border-red-500/30 bg-red-500/5',
+            'border-red-500/30 bg-red-500/5',
             arbitrator.vote === undefined &&
-              'border-muted-foreground/20 bg-muted/10'
+            'border-muted-foreground/20 bg-muted/10'
           )}
         >
           <div className="flex items-center gap-3">

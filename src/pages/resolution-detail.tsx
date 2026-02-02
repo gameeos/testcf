@@ -1,5 +1,6 @@
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+
 import { PageLayout } from '@/components/layout/page-layout';
 import {
   Card,
@@ -18,7 +19,7 @@ import { VoteProgress } from '@/components/arbitration/vote-progress';
 import { ArbitratorList } from '@/components/arbitration/arbitrator-list';
 import { AddressDisplay } from '@/components/shared/address-display';
 import { EmptyState } from '@/components/shared/empty-state';
-import { getResolutionById } from '@/data/mock-data';
+import { useResolution } from '@/data/use-resolution';
 import {
   ArrowLeft,
   Clock,
@@ -28,15 +29,28 @@ import {
   FileIcon,
   Gavel,
 } from 'lucide-react';
+import { formatBondAmount } from '@/lib/utils';
 
 export function ResolutionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
-  const resolution = id ? getResolutionById(id) : undefined;
+  const { data: resolution, isLoading, error } = useResolution(id);
+  console.log("resolution:", resolution)
 
-  if (!resolution) {
+  if (isLoading) {
+    return (
+      <PageLayout>
+        <EmptyState
+          title={t('common.loading') || 'Loading...'}
+          description={t('resolution.loadingDesc') || 'Please wait while we fetch the resolution details.'}
+        />
+      </PageLayout>
+    );
+  }
+
+  if (error || !resolution) {
     return (
       <PageLayout>
         <EmptyState
@@ -68,6 +82,8 @@ export function ResolutionDetailPage() {
       timeZoneName: 'short',
     });
   };
+
+
 
   return (
     <PageLayout>
@@ -181,7 +197,7 @@ export function ResolutionDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t('resolution.bondAmount')}</span>
                 <span className="text-sm text-foreground">
-                  {resolution.bondAmount} USDT
+                  {formatBondAmount(resolution.bondAmount, i18n)}
                 </span>
               </div>
             </CardContent>
@@ -221,7 +237,7 @@ export function ResolutionDetailPage() {
                     />
                   </p>
                   <p className="text-muted-foreground">
-                    {t('resolution.requiredBond')}<span className="text-foreground">500 USDT</span>
+                    {t('resolution.requiredBond')}<span className="text-foreground"> {formatBondAmount(500000000, i18n)}</span>
                   </p>
                 </div>
                 <Button asChild>
@@ -287,40 +303,40 @@ export function ResolutionDetailPage() {
                 </p>
               </div>
 
-              {(resolution.dispute.evidenceUrls.length > 0 ||
+              {/* {(resolution.dispute.evidenceUrls.length > 0 ||
                 resolution.dispute.evidenceFiles.length > 0) && (
-                <>
-                  <Separator />
-                  <div className="space-y-2">
-                    <span className="text-sm text-muted-foreground">
-                      {t('dispute.evidence')}
-                    </span>
-                    <div className="space-y-1">
-                      {resolution.dispute.evidenceUrls.map((url, index) => (
-                        <a
-                          key={index}
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-sm text-blue-400 hover:underline"
-                        >
-                          <ExternalLink className="h-3.5 w-3.5" />
-                          {url}
-                        </a>
-                      ))}
-                      {resolution.dispute.evidenceFiles.map((file, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 text-sm text-foreground"
-                        >
-                          <FileIcon className="h-3.5 w-3.5" />
-                          {file}
-                        </div>
-                      ))}
+                  <>
+                    <Separator />
+                    <div className="space-y-2">
+                      <span className="text-sm text-muted-foreground">
+                        {t('dispute.evidence')}
+                      </span>
+                      <div className="space-y-1">
+                        {resolution.dispute.evidenceUrls.map((url, index) => (
+                          <a
+                            key={index}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-blue-400 hover:underline"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            {url}
+                          </a>
+                        ))}
+                        {resolution.dispute.evidenceFiles.map((file, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-2 text-sm text-foreground"
+                          >
+                            <FileIcon className="h-3.5 w-3.5" />
+                            {file}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )} */}
 
               {resolution.dispute.txHash && (
                 <>

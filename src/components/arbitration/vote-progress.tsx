@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import type { Arbitration } from '@/types';
+import { useOOA } from '@/lib/use-ooa';
 
 interface VoteProgressProps {
   arbitration: Arbitration;
@@ -9,7 +10,11 @@ interface VoteProgressProps {
 
 export function VoteProgress({ arbitration, className }: VoteProgressProps) {
   const { t } = useTranslation();
-  const { yesVotes, noVotes, totalArbitrators } = arbitration;
+  let { arbitratorCount: totalArbitrators } = useOOA();
+  if (totalArbitrators === 0) {
+    totalArbitrators = 3;
+  }
+  const { yesVotes, noVotes } = arbitration;
   const votedCount = yesVotes + noVotes;
   const pendingCount = totalArbitrators - votedCount;
 

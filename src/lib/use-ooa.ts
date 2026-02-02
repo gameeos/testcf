@@ -17,6 +17,7 @@ export interface UseOOAReturnType {
   proposeBond: bigint | undefined
   challengeBond: bigint | undefined
   challengeWindow: bigint | undefined
+  arbitratorCount: number
 
   // 读方法函数
   refetchIsArbitrator: () => void
@@ -158,6 +159,12 @@ export function useOOA(): UseOOAReturnType {
       args: [disputeId, arbitrator],
     })
   }
+
+  const { data: arbitratorCount } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'arbitratorCount',
+  })
 
   // ============ 写方法 ============
 
@@ -302,6 +309,7 @@ export function useOOA(): UseOOAReturnType {
     proposeBond: (proposeBond as bigint | undefined),
     challengeBond: (challengeBond as bigint | undefined),
     challengeWindow: (challengeWindow as bigint | undefined),
+    arbitratorCount: Number(arbitratorCount),
 
     // 读方法函数
     refetchIsArbitrator,
@@ -309,6 +317,7 @@ export function useOOA(): UseOOAReturnType {
     getDispute,
     getArbitration,
     getVote,
+
 
     // 写方法
     createResolution,

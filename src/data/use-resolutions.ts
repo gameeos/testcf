@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useRPC } from './rpc-client';
+import { useRPC } from '../lib/rpc-client';
 import type { Resolution, ResolutionStatus } from '@/types';
 
 // RPC 返回的数据类型（与后端保持一致）

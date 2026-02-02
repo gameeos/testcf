@@ -5,7 +5,7 @@ import { ResolutionCard } from '@/components/resolution/resolution-card';
 import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useResolutions } from '@/lib/use-resolutions';
+import { useResolutions } from '@/data/use-resolutions';
 import type { ResolutionStatus } from '@/types';
 import { FileSearch } from 'lucide-react';
 

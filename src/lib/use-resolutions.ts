@@ -34,7 +34,7 @@ const statusMap: Record<number, ResolutionStatus> = {
 
 // 转换 RPC 数据为前端类型
 function transformResolution(data: RPCResolution): Resolution {
-  return {
+  const d= {
     id: data.id,
     resolutionId: data.resolutionId,
     marketId: data.marketId,
@@ -50,10 +50,12 @@ function transformResolution(data: RPCResolution): Resolution {
     proposeTime: data.proposeTime,
     endTime: data.endTime,
     disputeWindowTime: data.disputeWindowTime,
-    challengeDeadline: data.proposeTime + data.disputeWindowTime,
+    challengeDeadline: Number(data.proposeTime)*1000 + Number(data.disputeWindowTime)*1000,
     status: statusMap[data.status] || 'Unresolved',
     bondAmount: data.bondAmount,
   };
+  console.log("d:",d)
+  return d
 }
 
 // 调用 RPC 获取提案列表

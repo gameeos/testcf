@@ -50,7 +50,8 @@
     "filterInvalid": "已作廢",
     "empty": "暫無提案",
     "emptyDesc": "當前篩選條件下沒有找到任何提案",
-    "viewAll": "查看全部"
+    "viewAll": "查看全部",
+    "loadMore": "加載更多"
   },
   "resolution": {
     "notFound": "提案不存在",

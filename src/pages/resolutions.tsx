@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout/page-layout';
 import { ResolutionCard } from '@/components/resolution/resolution-card';
@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useResolutions } from '@/data/use-resolutions';
-import type { ResolutionStatus } from '@/types';
+import type { Resolution, ResolutionStatus } from '@/types';
 import { FileSearch } from 'lucide-react';
 
 type FilterStatus = 'all' | ResolutionStatus;
@@ -14,6 +14,9 @@ type FilterStatus = 'all' | ResolutionStatus;
 export function ResolutionsPage() {
   const { t } = useTranslation();
   const [filter, setFilter] = useState<FilterStatus>('all');
+  const [page, setPage] = useState(1);
+  const [allResolutions, setAllResolutions] = useState<Resolution[]>([]);
+  const pageSize = 2;
 
   // 状态映射到后端数字
   const statusMap: Record<ResolutionStatus, number> = {
@@ -26,12 +29,32 @@ export function ResolutionsPage() {
 
   // 调用 RPC 获取数据
   const { data: resolutions, isLoading, error } = useResolutions(
-    1,
-    100, // 获取更多数据
+    page,
+    pageSize,
     filter === 'all' ? undefined : statusMap[filter]
   );
 
-  const filteredResolutions = resolutions || [];
+  // 当页码为1时（初始加载或切换筛选），重置累积数据
+  // 当页码大于1时，追加新数据
+  useEffect(() => {
+    if (page === 1) {
+      setAllResolutions(resolutions || []);
+    } else if (resolutions) {
+      setAllResolutions((prev) => [...prev, ...resolutions]);
+    }
+  }, [resolutions, page]);
+
+  const hasMore = resolutions?.length === pageSize;
+
+  // 当筛选条件改变时，重置页码
+  const handleFilterChange = (value: string) => {
+    setPage(1);
+    setFilter(value as FilterStatus);
+  };
+
+  const handleLoadMore = () => {
+    setPage((prev) => prev + 1);
+  };
 
   return (
     <PageLayout>
@@ -47,7 +70,7 @@ export function ResolutionsPage() {
         {/* 筛选器 */}
         <Tabs
           value={filter}
-          onValueChange={(value) => setFilter(value as FilterStatus)}
+          onValueChange={handleFilterChange}
         >
           <TabsList className="bg-card/50">
             <TabsTrigger value="all">{t('resolutions.filterAll')}</TabsTrigger>
@@ -67,12 +90,21 @@ export function ResolutionsPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-destructive">{t('loading.error')} {(error as Error).message}</div>
           </div>
-        ) : filteredResolutions.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredResolutions.map((resolution) => (
-              <ResolutionCard key={resolution.id} resolution={resolution} />
-            ))}
-          </div>
+        ) : allResolutions.length > 0 ? (
+          <>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {allResolutions.map((resolution) => (
+                <ResolutionCard key={resolution.id} resolution={resolution} />
+              ))}
+            </div>
+            {hasMore && (
+              <div className="flex justify-center pt-4">
+                <Button variant="ghost" onClick={handleLoadMore} disabled={isLoading}>
+                  {isLoading ? t('loading.loading') : t('resolutions.loadMore')}
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <EmptyState
             icon={<FileSearch className="h-12 w-12" />}

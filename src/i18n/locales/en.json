@@ -50,7 +50,8 @@
     "filterInvalid": "Invalid",
     "empty": "No Resolutions",
     "emptyDesc": "No resolutions found for the current filter",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "loadMore": "Load More"
   },
   "resolution": {
     "notFound": "Resolution Not Found",

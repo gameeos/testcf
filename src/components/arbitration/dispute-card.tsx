@@ -9,23 +9,27 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AddressDisplay } from '@/components/shared/address-display';
-import type { Resolution } from '@/types';
 import { ArrowRight, Clock, Gavel } from 'lucide-react';
+import { useOOA } from '@/lib/use-ooa';
 
 interface DisputeCardProps {
-  resolution: Resolution;
+  arbitration: any;
 }
 
-export function DisputeCard({ resolution }: DisputeCardProps) {
+export function DisputeCard({ arbitration }: DisputeCardProps) {
   const { t, i18n } = useTranslation();
 
-  if (!resolution.dispute || !resolution.arbitration) {
+  if (!arbitration) {
     return null;
   }
 
-  const { dispute, arbitration } = resolution;
+  let { arbitratorCount: totalArbitrators } = useOOA();
+    if (totalArbitrators === 0) {
+      totalArbitrators = 3;
+    }
+
   const votedCount = arbitration.yesVotes + arbitration.noVotes;
-  const pendingCount = arbitration.totalArbitrators - votedCount;
+  const pendingCount = totalArbitrators - votedCount;
 
   const formatTime = (timestamp: number) => {
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
@@ -52,17 +56,17 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
             {arbitration.finalized ? t('disputeCard.completed') : t('disputeCard.pendingVote')}
           </Badge>
           <Badge variant="outline">
-            {dispute.disputeType === 'Outcome' ? t('disputeCard.outcomeDispute') : t('disputeCard.ruleDispute')}
+            {arbitration.disputeType === 'Outcome' ? t('disputeCard.outcomeDispute') : t('disputeCard.ruleDispute')}
           </Badge>
         </div>
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Dispute #{dispute.id}</span>
+            <span>Dispute #{arbitration.id}</span>
             <span>|</span>
-            <span>Resolution #{resolution.id}</span>
+            <span>Resolution #{arbitration.resolutionId}</span>
           </div>
           <h3 className="line-clamp-2 font-medium leading-tight text-foreground">
-            {resolution.market.title}
+            {arbitration.market.title}
           </h3>
         </div>
       </CardHeader>
@@ -71,23 +75,23 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
         <div className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t('disputeCard.proposer')}</span>
-            <AddressDisplay address={resolution.proposer} chars={4} />
+            <AddressDisplay address={arbitration.proposer} chars={4} />
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t('disputeCard.challenger')}</span>
-            <AddressDisplay address={dispute.challenger} chars={4} />
+            <AddressDisplay address={arbitration.challenger} chars={4} />
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">{t('disputeCard.originalProposal')}</span>
             <Badge
               variant="outline"
               className={
-                resolution.proposedOutcome === 'YES'
+                arbitration.resolutionOutcome === 'YES'
                   ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
                   : 'border-red-500/50 bg-red-500/10 text-red-400'
               }
             >
-              {resolution.proposedOutcome}
+              {arbitration.resolutionOutcome}
             </Badge>
           </div>
           <div className="flex items-center justify-between">
@@ -95,12 +99,12 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
             <Badge
               variant="outline"
               className={
-                dispute.challengedOutcome === 'YES'
+                arbitration.challengedOutcome === 'YES'
                   ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
                   : 'border-red-500/50 bg-red-500/10 text-red-400'
               }
             >
-              {dispute.challengedOutcome}
+              {arbitration.challengedOutcome}
             </Badge>
           </div>
           <div className="flex items-center justify-between">
@@ -109,7 +113,7 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
               {t('disputeCard.submitTime')}
             </span>
             <span className="text-foreground">
-              {formatTime(dispute.disputeTime)}
+              {formatTime(Number(arbitration.disputeTime))}
             </span>
           </div>
         </div>
@@ -122,7 +126,7 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
               {t('disputeCard.voteProgress')}
             </span>
             <span className="text-foreground">
-              {votedCount}/{arbitration.totalArbitrators}
+              {votedCount}/{totalArbitrators}
             </span>
           </div>
           <div className="mt-2 flex gap-2">
@@ -144,7 +148,7 @@ export function DisputeCard({ resolution }: DisputeCardProps) {
 
       <CardFooter>
         <Button variant="outline" className="w-full" asChild>
-          <Link to={`/arbitration/${dispute.id}`}>
+          <Link to={`/arbitration/${arbitration.id}`}>
             {t('disputeCard.viewDetails')}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

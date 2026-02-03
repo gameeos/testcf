@@ -18,6 +18,7 @@ export interface UseOOAReturnType {
   challengeBond: bigint | undefined
   challengeWindow: bigint | undefined
   arbitratorCount: number
+  currentAccount: `0x${string}` | undefined
 
   // 读方法函数
   refetchIsArbitrator: () => void
@@ -51,6 +52,7 @@ export interface UseOOAReturnType {
  */
 export function useOOA(): UseOOAReturnType {
   const { address } = useWallet()
+  const currentAccount = address
 
   // ============ 读方法 ============
 
@@ -310,6 +312,7 @@ export function useOOA(): UseOOAReturnType {
     challengeBond: (challengeBond as bigint | undefined),
     challengeWindow: (challengeWindow as bigint | undefined),
     arbitratorCount: Number(arbitratorCount),
+    currentAccount,
 
     // 读方法函数
     refetchIsArbitrator,

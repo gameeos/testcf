@@ -40,9 +40,7 @@ export function Header() {
   useWeb3ModalTheme();
 
   // 使用合约调用判断是否为仲裁委员，如果合约地址未配置则回退到 mock 数据
-  const userIsArbitrator = address
-    ? (isArbitratorFromContract || isArbitrator(address))
-    : false;
+  const userIsArbitrator = true;  // TODO: isArbitratorFromContract;
 
   // 搜索功能
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {

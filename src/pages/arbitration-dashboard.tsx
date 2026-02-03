@@ -6,31 +6,25 @@ import { EmptyState } from '@/components/shared/empty-state';
 import { AddressDisplay } from '@/components/shared/address-display';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  getPendingArbitrations,
-  getCompletedArbitrations,
-  currentUserAddress,
-  isArbitrator,
-  mockResolutions,
-} from '@/data/mock-data';
 import { Gavel, Shield, CheckCircle, Clock } from 'lucide-react';
+import { useOOA } from '@/lib/use-ooa';
+import { useArbitration } from '@/data/use-arbitration';
 
 type TabValue = 'pending' | 'completed' | 'my-votes';
 
 export function ArbitrationDashboardPage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabValue>('pending');
+  const { isArbitrator, currentAccount } = useOOA();
+  const isUserArbitrator = isArbitrator;
 
-  const pendingArbitrations = getPendingArbitrations();
-  const completedArbitrations = getCompletedArbitrations();
+  const { statistics, pendingArbitrations, completedArbitrations, myVotes } = useArbitration({ address: currentAccount, page: 1, pageSize: 20 })
 
-  // 我的投票记录
-  const myVotes = mockResolutions.filter((r) => {
-    if (!r.arbitration) return false;
-    return r.arbitration.votes.some((v) => v.arbitrator === currentUserAddress);
-  });
+  const { data: stats, isLoading: statsLoading, error: statsError } = statistics
+  const { data: pendingData, isLoading: pendingLoading, error: pendingError } = pendingArbitrations
+  const { data: completedData, isLoading: compLoading, error: compError } = completedArbitrations
+  const { data: myVotesData, isLoading: myLoading, error: myError } = myVotes
 
-  const isUserArbitrator = isArbitrator(currentUserAddress);
 
   return (
     <PageLayout>
@@ -62,7 +56,7 @@ export function ArbitrationDashboardPage() {
                 {t('arbitrationDashboard.notArbitrator')}
               </Badge>
             )}
-            <AddressDisplay address={currentUserAddress} chars={4} />
+            <AddressDisplay address={currentAccount!} chars={4} />
           </div>
         </div>
 
@@ -75,7 +69,7 @@ export function ArbitrationDashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">
-                  {pendingArbitrations.length}
+                  {stats?.pendingCount ?? 0}
                 </p>
                 <p className="text-sm text-muted-foreground">{t('arbitrationDashboard.pending')}</p>
               </div>
@@ -88,7 +82,7 @@ export function ArbitrationDashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">
-                  {completedArbitrations.length}
+                  {stats?.resolvedCount ?? 0}
                 </p>
                 <p className="text-sm text-muted-foreground">{t('arbitrationDashboard.completed')}</p>
               </div>
@@ -101,7 +95,7 @@ export function ArbitrationDashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-foreground">
-                  {myVotes.length}
+                  {stats?.votedCount ?? 0}
                 </p>
                 <p className="text-sm text-muted-foreground">{t('arbitrationDashboard.myVotes')}</p>
               </div>
@@ -118,9 +112,9 @@ export function ArbitrationDashboardPage() {
             <TabsTrigger value="pending" className="gap-1.5">
               <Clock className="h-3.5 w-3.5" />
               {t('arbitrationDashboard.pending')}
-              {pendingArbitrations.length > 0 && (
+              {pendingData?.length > 0 && (
                 <Badge variant="secondary" className="ml-1 h-5 px-1.5">
-                  {pendingArbitrations.length}
+                  {pendingData.length}
                 </Badge>
               )}
             </TabsTrigger>
@@ -135,10 +129,10 @@ export function ArbitrationDashboardPage() {
           </TabsList>
 
           <TabsContent value="pending" className="mt-6">
-            {pendingArbitrations.length > 0 ? (
+            {pendingData?.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {pendingArbitrations.map((resolution) => (
-                  <DisputeCard key={resolution.id} resolution={resolution} />
+                {pendingData.map((arb: any) => (
+                  <DisputeCard key={arb.id} arbitration={arb} />
                 ))}
               </div>
             ) : (
@@ -151,10 +145,10 @@ export function ArbitrationDashboardPage() {
           </TabsContent>
 
           <TabsContent value="completed" className="mt-6">
-            {completedArbitrations.length > 0 ? (
+            {completedData?.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {completedArbitrations.map((resolution) => (
-                  <DisputeCard key={resolution.id} resolution={resolution} />
+                {completedData.map((arb: any) => (
+                  <DisputeCard key={arb.id} arbitration={arb} />
                 ))}
               </div>
             ) : (
@@ -167,10 +161,10 @@ export function ArbitrationDashboardPage() {
           </TabsContent>
 
           <TabsContent value="my-votes" className="mt-6">
-            {myVotes.length > 0 ? (
+            {myVotesData?.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {myVotes.map((resolution) => (
-                  <DisputeCard key={resolution.id} resolution={resolution} />
+                {myVotesData.map((arb: any) => (
+                  <DisputeCard key={arb.id} arbitration={arb} />
                 ))}
               </div>
             ) : (

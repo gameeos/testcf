@@ -25,8 +25,8 @@ import {
   Clock,
   FileText,
   AlertTriangle,
-  ExternalLink,
-  FileIcon,
+  // ExternalLink,
+  // FileIcon,
   Gavel,
 } from 'lucide-react';
 import { formatBondAmount } from '@/lib/utils';

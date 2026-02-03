@@ -20,52 +20,43 @@ export function ArbitratorList({ arbitration, className }: ArbitratorListProps) 
     totalArbitrators = 3;
   }
 
-  // 构建委员投票状态
-  const arbitratorVotes = mockArbitrators.slice(0, totalArbitrators).map((arbitrator) => {
-    const vote = votes.find((v) => v.arbitrator === arbitrator.address);
-    return {
-      ...arbitrator,
-      vote,
-    };
-  });
-
   return (
     <div className={cn('space-y-2', className)}>
-      {arbitratorVotes.map((arbitrator) => (
+      {votes.map((vote) => (
         <div
-          key={arbitrator.address}
+          key={vote.arbitrator}
           className={cn(
             'flex items-center justify-between rounded-lg border px-3 py-2',
-            arbitrator.vote?.support === true &&
+            vote.support === true &&
             'border-emerald-500/30 bg-emerald-500/5',
-            arbitrator.vote?.support === false &&
+            vote.support === false &&
             'border-red-500/30 bg-red-500/5',
-            arbitrator.vote === undefined &&
+            vote === undefined &&
             'border-muted-foreground/20 bg-muted/10'
           )}
         >
           <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
+            {/* <Avatar className="h-8 w-8">
               <AvatarFallback className="text-xs">
                 {arbitrator.name?.charAt(0) || '?'}
               </AvatarFallback>
-            </Avatar>
+            </Avatar> */}
             <div>
               <div className="text-sm font-medium text-foreground">
-                {arbitrator.name || t('arbitratorList.unknownMember')}
+                {vote.arbitrator || t('arbitratorList.unknownMember')}
               </div>
-              <AddressDisplay
+              {/* <AddressDisplay
                 address={arbitrator.address}
                 chars={4}
                 className="text-xs"
-              />
+              /> */}
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {arbitrator.vote ? (
+            {vote ? (
               <>
-                {arbitrator.vote.support ? (
+                {vote.support ? (
                   <span className="flex items-center gap-1 text-sm text-emerald-400">
                     <Check className="h-4 w-4" />
                     {t('arbitratorList.support')}

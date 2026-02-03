@@ -73,10 +73,3 @@ export interface Arbitration {
   votes: ArbitrationVote[];
   totalArbitrators: number;
 }
-
-// 仲裁委员
-export interface Arbitrator {
-  address: string;
-  name?: string;
-  role: 'platform' | 'external' | 'community';
-}

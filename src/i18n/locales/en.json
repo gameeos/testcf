@@ -138,7 +138,7 @@
       "subtitle": "Fill in your challenge reason and evidence",
       "disputeId": "Dispute ID",
       "disputeIdPlaceholder": "Enter unique dispute identifier",
-      "disputeIdHint": "This ID will be used to identify this dispute on-chain. Please ensure it is unique.",
+      "disputeIdHint": "This ID will be used to identify this dispute on-chain.",
       "disputeType": "Dispute Type",
       "outcomeDispute": "Outcome Dispute",
       "ruleDispute": "Rule Dispute",

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout/page-layout';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+// import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
@@ -28,16 +28,18 @@ import { CountdownTimer } from '@/components/resolution/countdown-timer';
 import { ConfirmDialog } from '@/components/shared/confirm-dialog';
 import { AddressDisplay } from '@/components/shared/address-display';
 import { EmptyState } from '@/components/shared/empty-state';
-import { getResolutionById } from '@/data/mock-data';
-import type { DisputeType } from '@/types';
 import {
   ArrowLeft,
   Clock,
   FileText,
-  Plus,
-  X,
-  Upload,
+  // Plus,
+  // X,
+  // Upload,
 } from 'lucide-react';
+import { useChallengeMutation, useCreateDisputeId } from '@/data/use-arbitration';
+import { useResolution } from '@/data/use-resolution';
+import { useOOA } from '@/lib/use-ooa';
+import { useWallet } from '@/lib/use-wallet';
 
 export function ChallengeNewPage() {
   const [searchParams] = useSearchParams();
@@ -45,63 +47,94 @@ export function ChallengeNewPage() {
   const { t, i18n } = useTranslation();
 
   const resolutionId = searchParams.get('resolutionId') || '';
-  const resolution = resolutionId ? getResolutionById(resolutionId) : undefined;
+  const disputeType = 0
+
+  const { data: resolution } = useResolution(resolutionId);
+  const { currentAccount } = useOOA();
+  const { signMessage } = useWallet()
 
   // 表单状态
+  const createDisputeId = useCreateDisputeId()
   const [disputeId, setDisputeId] = useState('');
-  const [disputeType, setDisputeType] = useState<DisputeType>('Outcome');
   const [challengedOutcome, setChallengedOutcome] = useState<'YES' | 'NO'>(
     resolution?.proposedOutcome === 'YES' ? 'NO' : 'YES'
   );
   const [reason, setReason] = useState('');
-  const [evidenceUrls, setEvidenceUrls] = useState<string[]>(['']);
-  const [evidenceFiles, setEvidenceFiles] = useState<string[]>([]);
-  const [txHash, setTxHash] = useState('');
+  // const [evidenceUrls, setEvidenceUrls] = useState<string[]>(['']);
+  // const [evidenceFiles, setEvidenceFiles] = useState<string[]>([]);
 
   // 弹窗状态
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  useEffect(() => {
+    const genId = async () => {
+      const disputeId = await createDisputeId.mutateAsync()
+      setDisputeId(disputeId)
+    }
+    if (resolutionId && resolutionId != "") {
+      genId()
+    }
+  }, [resolutionId])
+
   // 验证
   const isValid =
     disputeId.trim().length > 0 &&
-    reason.trim().length > 0 &&
-    evidenceUrls.some((url) => url.trim().length > 0);
+    reason.trim().length > 0;
 
-  const handleAddUrl = () => {
-    setEvidenceUrls([...evidenceUrls, '']);
-  };
+  // const handleAddUrl = () => {
+  //   setEvidenceUrls([...evidenceUrls, '']);
+  // };
 
-  const handleRemoveUrl = (index: number) => {
-    setEvidenceUrls(evidenceUrls.filter((_, i) => i !== index));
-  };
+  // const handleRemoveUrl = (index: number) => {
+  //   setEvidenceUrls(evidenceUrls.filter((_, i) => i !== index));
+  // };
 
-  const handleUrlChange = (index: number, value: string) => {
-    const newUrls = [...evidenceUrls];
-    newUrls[index] = value;
-    setEvidenceUrls(newUrls);
-  };
+  // const handleUrlChange = (index: number, value: string) => {
+  //   const newUrls = [...evidenceUrls];
+  //   newUrls[index] = value;
+  //   setEvidenceUrls(newUrls);
+  // };
 
-  const handleFileUpload = () => {
-    // 模拟文件上传
-    const fileName = `evidence_${Date.now()}.pdf`;
-    setEvidenceFiles([...evidenceFiles, fileName]);
-  };
+  // const handleFileUpload = () => {
+  //   // 模拟文件上传
+  //   const fileName = `evidence_${Date.now()}.pdf`;
+  //   setEvidenceFiles([...evidenceFiles, fileName]);
+  // };
 
-  const handleRemoveFile = (index: number) => {
-    setEvidenceFiles(evidenceFiles.filter((_, i) => i !== index));
-  };
+  // const handleRemoveFile = (index: number) => {
+  //   setEvidenceFiles(evidenceFiles.filter((_, i) => i !== index));
+  // };
 
   const handleSubmit = () => {
     setShowConfirm(true);
   };
 
-  const handleConfirm = () => {
+  const challengeMutation = useChallengeMutation()
+  const handleConfirm = async () => {
     setShowConfirm(false);
-    // 模拟提交
-    setTimeout(() => {
-      setShowSuccess(true);
-    }, 500);
+    try {
+      const sign = await signMessage(`${disputeId}${resolutionId}${resolution!.marketId}${disputeType}${challengedOutcome}${reason}`)
+      if (sign) {
+        const result = await challengeMutation.mutateAsync({
+          id: disputeId,
+          resolutionId: resolutionId,
+          marketId: resolution!.marketId,
+          type: disputeType,
+          outcome: challengedOutcome,
+          reason: reason,
+          challenger: currentAccount!,
+          sign: sign
+        })
+        if (result.success) {
+          // TODO: 调用上链方法
+        }
+      } else {
+        console.error("Signature error")
+      }
+    } catch (error) {
+      console.error("handleConfirm error:", error)
+    }
   };
 
   const handleSuccessClose = () => {
@@ -225,7 +258,7 @@ export function ChallengeNewPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(resolution.proposeTime)}
+                  {formatTime(resolution.proposeTime*1000)}
                 </span>
               </div>
             </div>
@@ -242,13 +275,14 @@ export function ChallengeNewPage() {
             {/* Dispute ID */}
             <div className="space-y-3">
               <Label htmlFor="disputeId">
-                {t('challenge.form.disputeId')} <span className="text-red-400">*</span>
+                {t('challenge.form.disputeId')} {/* <span className="text-red-400">*</span> */}
               </Label>
               <Input
                 id="disputeId"
                 placeholder={t('challenge.form.disputeIdPlaceholder')}
                 value={disputeId}
-                onChange={(e) => setDisputeId(e.target.value)}
+                // onChange={(e) => setDisputeId(e.target.value)}
+                disabled={true}
               />
               <p className="text-xs text-muted-foreground">
                 {t('challenge.form.disputeIdHint')}
@@ -258,7 +292,7 @@ export function ChallengeNewPage() {
             <Separator />
 
             {/* 仲裁类型 */}
-            <div className="space-y-3">
+            {/* <div className="space-y-3">
               <Label>{t('challenge.form.disputeType')}</Label>
               <RadioGroup
                 value={disputeType}
@@ -279,13 +313,13 @@ export function ChallengeNewPage() {
                 </div>
               </RadioGroup>
               <p className="text-xs text-muted-foreground">
-                {disputeType === 'Outcome'
+                {disputeType === 0
                   ? t('challenge.form.outcomeDisputeDesc')
                   : t('challenge.form.ruleDisputeDesc')}
               </p>
             </div>
 
-            <Separator />
+            <Separator /> */}
 
             {/* 主张结果 */}
             <div className="space-y-3">
@@ -295,6 +329,7 @@ export function ChallengeNewPage() {
                 onValueChange={(value) =>
                   setChallengedOutcome(value as 'YES' | 'NO')
                 }
+                disabled={true}
               >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue />
@@ -328,7 +363,7 @@ export function ChallengeNewPage() {
             <Separator />
 
             {/* 证据链接 */}
-            <div className="space-y-3">
+            {/* <div className="space-y-3">
               <Label>
                 {t('challenge.form.evidenceUrls')} <span className="text-red-400">*</span>
               </Label>
@@ -363,10 +398,10 @@ export function ChallengeNewPage() {
               </Button>
             </div>
 
-            <Separator />
+            <Separator /> */}
 
             {/* 证据文件 */}
-            <div className="space-y-3">
+            {/* <div className="space-y-3">
               <Label>{t('challenge.form.uploadFiles')}</Label>
               <div className="space-y-2">
                 {evidenceFiles.map((file, index) => (
@@ -400,10 +435,10 @@ export function ChallengeNewPage() {
               </p>
             </div>
 
-            <Separator />
+            <Separator /> */}
 
             {/* 交易哈希 */}
-            <div className="space-y-3">
+            {/* <div className="space-y-3">
               <Label htmlFor="txHash">{t('challenge.form.txHash')}</Label>
               <Input
                 id="txHash"
@@ -411,7 +446,7 @@ export function ChallengeNewPage() {
                 value={txHash}
                 onChange={(e) => setTxHash(e.target.value)}
               />
-            </div>
+            </div> */}
           </CardContent>
         </Card>
 

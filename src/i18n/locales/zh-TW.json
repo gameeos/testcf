@@ -138,7 +138,7 @@
       "subtitle": "填寫您的仲裁理由和證據材料",
       "disputeId": "爭議 ID",
       "disputeIdPlaceholder": "輸入唯一的爭議標識符",
-      "disputeIdHint": "此 ID 將用於在鏈上識別此爭議。請確保其唯一性。",
+      "disputeIdHint": "此 ID 將用於在鏈上識別此爭議。",
       "disputeType": "仲裁類型",
       "outcomeDispute": "結果仲裁",
       "ruleDispute": "規則仲裁",

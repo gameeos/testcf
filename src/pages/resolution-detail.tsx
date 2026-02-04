@@ -141,7 +141,7 @@ export function ResolutionDetailPage() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('resolution.marketEndTime')}</span>
                   <span className="text-foreground">
-                    {formatTime(resolution.market.endTime)}
+                    {formatTime(Number(resolution.endTime)*1000)}
                   </span>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export function ResolutionDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(resolution.proposeTime)}
+                  {formatTime(resolution.proposeTime*1000)}
                 </span>
               </div>
               <Separator />

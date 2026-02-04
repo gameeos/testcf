@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRPC } from '../lib/rpc-client';
 
 interface UseArbitrationOptions {
@@ -84,6 +84,8 @@ export function useArbitration(options?: UseArbitrationOptions) {
         refetchOnWindowFocus: false,
     })
 
+
+
     return {
         statistics,
         pendingArbitrations,
@@ -91,4 +93,38 @@ export function useArbitration(options?: UseArbitrationOptions) {
         myVotes,
         arbitration
     }
+}
+
+export function useCreateDisputeId() {
+    const rpc = useRPC();
+
+    return useMutation({
+        mutationFn: async () => {
+            const result = await rpc.request('createDisputeId', []);
+            return result as string;
+        },
+    });
+}
+
+export function useChallengeMutation() {
+    const rpc = useRPC();
+
+    return useMutation({
+        mutationFn: async (params: {
+            id: string, resolutionId: string, marketId: string, type: number, outcome: string, reason: string, challenger: string, sign: string
+        }) => {
+            const { id, resolutionId, marketId, type, outcome, reason, challenger, sign } = params
+            const result = await rpc.request("createDispute", [id, resolutionId, marketId, type, outcome, reason, challenger, sign])
+            if (result && result.success === false) {
+                throw new Error(result.message);
+            }
+            return result
+        },
+        onSuccess: (data) => {
+            console.debug("createDispute:", data)
+        },
+        onError: (error: any) => {
+            console.error("createDispute:", error)
+        }
+    })
 }

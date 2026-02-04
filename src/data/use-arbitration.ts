@@ -13,6 +13,8 @@ export function useArbitration(options?: UseArbitrationOptions) {
     const rpc = useRPC();
     const address = options?.address;
     const activeTab = options?.activeTab ?? 'pending';
+    const page = options?.page || 1;
+    const pageSize = options?.pageSize || 6;
 
     // 统计数据查询 - 始终加载
     const statistics = useQuery({
@@ -32,38 +34,42 @@ export function useArbitration(options?: UseArbitrationOptions) {
 
     // 待处理仲裁列表 - 仅在 pending tab 激活时加载
     const pendingArbitrations = useQuery({
-        queryKey: ['fetchArbitrations', false, options?.page || 1, options?.pageSize || 6],
+        queryKey: ['fetchArbitrations', 'pending', false, page, pageSize],
         queryFn: async () => {
-            const result = await rpc.request('fetchArbitrations', [false, options?.page || 1, options?.pageSize || 6]);
+            const result = await rpc.request('fetchArbitrations', [false, page, pageSize]);
             return result;
         },
         enabled: activeTab === 'pending',
         staleTime: 30_000,
         refetchOnWindowFocus: false,
+        gcTime: 0, // 切换 tab 后立即清除缓存
     });
 
     // 已完成仲裁列表 - 仅在 completed tab 激活时加载
     const completedArbitrations = useQuery({
-        queryKey: ['fetchArbitrations', true, options?.page || 1, options?.pageSize || 6],
+        queryKey: ['fetchArbitrations', 'completed', true, page, pageSize],
         queryFn: async () => {
-            const result = await rpc.request('fetchArbitrations', [true, options?.page || 1, options?.pageSize || 6]);
+            const result = await rpc.request('fetchArbitrations', [true, page, pageSize]);
             return result;
         },
         enabled: activeTab === 'completed',
         staleTime: 30_000,
         refetchOnWindowFocus: false,
+        gcTime: 0, // 切换 tab 后立即清除缓存
     });
+    console.log("completedArbitrations:",completedArbitrations.data)
 
     // 我的投票记录 - 仅在 my-votes tab 激活时加载
     const myVotes = useQuery({
-        queryKey: ['searchArbitrations', undefined, address, options?.page || 1, options?.pageSize || 6],
+        queryKey: ['searchArbitrations', 'my-votes', undefined, address, page, pageSize],
         queryFn: async () => {
-            const result = await rpc.request('searchArbitrations', [undefined, address, options?.page || 1, options?.pageSize || 6]);
+            const result = await rpc.request('searchArbitrations', [undefined, address, page, pageSize]);
             return result;
         },
         enabled: activeTab === 'my-votes' && !!address,
         staleTime: 30_000,
         refetchOnWindowFocus: false,
+        gcTime: 0, // 切换 tab 后立即清除缓存
     });
 
     return {

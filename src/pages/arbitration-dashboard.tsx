@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout/page-layout';
 import { DisputeCard } from '@/components/arbitration/dispute-card';
 import { EmptyState } from '@/components/shared/empty-state';
 import { AddressDisplay } from '@/components/shared/address-display';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Gavel, Shield, CheckCircle, Clock } from 'lucide-react';
 import { useOOA } from '@/lib/use-ooa';
@@ -15,16 +16,73 @@ type TabValue = 'pending' | 'completed' | 'my-votes';
 export function ArbitrationDashboardPage() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabValue>('pending');
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
   const { isArbitrator, currentAccount } = useOOA();
   const isUserArbitrator = isArbitrator;
 
-  const { statistics, pendingArbitrations, completedArbitrations, myVotes } = useArbitration({ address: currentAccount, activeTab, page: 1, pageSize: 20 })
+  const { statistics, pendingArbitrations, completedArbitrations, myVotes } = useArbitration({
+    address: currentAccount,
+    activeTab,
+    page,
+    pageSize
+  })
 
-  const { data: stats, isLoading: statsLoading, error: statsError } = statistics
+  const { data: stats } = statistics
   const { data: pendingData, isLoading: pendingLoading, error: pendingError } = pendingArbitrations
-  const { data: completedData, isLoading: compLoading, error: compError } = completedArbitrations
-  const { data: myVotesData, isLoading: myLoading, error: myError } = myVotes
+  const { data: completedData, isLoading: completedLoading, error: completedError } = completedArbitrations
+  const { data: myVotesData, isLoading: myVotesLoading, error: myVotesError } = myVotes
 
+  // 累积数据
+  const [allData, setAllData] = useState<Record<TabValue, any[]>>({
+    pending: [],
+    completed: [],
+    'my-votes': [],
+  });
+
+  // 根据当前 tab 获取对应数据
+  const currentData = activeTab === 'pending' ? pendingData :
+                      activeTab === 'completed' ? completedData :
+                      myVotesData;
+
+  const currentLoading = activeTab === 'pending' ? pendingLoading :
+                        activeTab === 'completed' ? completedLoading :
+                        myVotesLoading;
+
+  const currentError = activeTab === 'pending' ? pendingError :
+                      activeTab === 'completed' ? completedError :
+                      myVotesError;
+
+  const hasMore = currentData?.length === pageSize;
+
+  // 当数据加载时更新累积数据
+  useEffect(() => {
+    if (!currentData || currentLoading) return;
+
+    if (page === 1) {
+      // 第一页：替换数据
+      setAllData((prev) => ({
+        ...prev,
+        [activeTab]: currentData
+      }));
+    } else {
+      // 后续页：追加数据
+      setAllData((prev) => ({
+        ...prev,
+        [activeTab]: [...prev[activeTab], ...currentData]
+      }));
+    }
+  }, [currentData, currentLoading, page, activeTab]);
+
+  // 切换 tab 时重置页码
+  const handleTabChange = (value: TabValue) => {
+    setActiveTab(value);
+    setPage(1);
+  };
+
+  const handleLoadMore = () => {
+    setPage((prev) => prev + 1);
+  };
 
   return (
     <PageLayout>
@@ -106,17 +164,12 @@ export function ArbitrationDashboardPage() {
         {/* Tabs */}
         <Tabs
           value={activeTab}
-          onValueChange={(value) => setActiveTab(value as TabValue)}
+          onValueChange={(value) => handleTabChange(value as TabValue)}
         >
           <TabsList className="bg-card/50">
             <TabsTrigger value="pending" className="gap-1.5">
               <Clock className="h-3.5 w-3.5" />
               {t('arbitrationDashboard.pending')}
-              {pendingData?.length > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5">
-                  {pendingData.length}
-                </Badge>
-              )}
             </TabsTrigger>
             <TabsTrigger value="completed" className="gap-1.5">
               <CheckCircle className="h-3.5 w-3.5" />
@@ -129,12 +182,29 @@ export function ArbitrationDashboardPage() {
           </TabsList>
 
           <TabsContent value="pending" className="mt-6">
-            {pendingData?.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {pendingData.map((arb: any) => (
-                  <DisputeCard key={arb.id} arbitration={arb} />
-                ))}
+            {currentLoading && allData.pending.length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-muted-foreground">{t('loading.loading')}</div>
               </div>
+            ) : currentError ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-destructive">{t('loading.error')} {(currentError as Error).message}</div>
+              </div>
+            ) : allData.pending.length > 0 ? (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {allData.pending.map((arb: any) => (
+                    <DisputeCard key={arb.id} arbitration={arb} />
+                  ))}
+                </div>
+                {hasMore && (
+                  <div className="flex justify-center pt-4">
+                    <Button variant="ghost" onClick={handleLoadMore} disabled={currentLoading}>
+                      {currentLoading ? t('loading.loading') : t('loading.loadMore')}
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               <EmptyState
                 icon={<Clock className="h-12 w-12" />}
@@ -145,12 +215,29 @@ export function ArbitrationDashboardPage() {
           </TabsContent>
 
           <TabsContent value="completed" className="mt-6">
-            {completedData?.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {completedData.map((arb: any) => (
-                  <DisputeCard key={arb.id} arbitration={arb} />
-                ))}
+            {currentLoading && allData.completed.length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-muted-foreground">{t('loading.loading')}</div>
               </div>
+            ) : currentError ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-destructive">{t('loading.error')} {(currentError as Error).message}</div>
+              </div>
+            ) : allData.completed.length > 0 ? (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {allData.completed.map((arb: any) => (
+                    <DisputeCard key={arb.id} arbitration={arb} />
+                  ))}
+                </div>
+                {hasMore && (
+                  <div className="flex justify-center pt-4">
+                    <Button variant="ghost" onClick={handleLoadMore} disabled={currentLoading}>
+                      {currentLoading ? t('loading.loading') : t('loading.loadMore')}
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               <EmptyState
                 icon={<CheckCircle className="h-12 w-12" />}
@@ -161,12 +248,29 @@ export function ArbitrationDashboardPage() {
           </TabsContent>
 
           <TabsContent value="my-votes" className="mt-6">
-            {myVotesData?.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {myVotesData.map((arb: any) => (
-                  <DisputeCard key={arb.id} arbitration={arb} />
-                ))}
+            {currentLoading && allData['my-votes'].length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-muted-foreground">{t('loading.loading')}</div>
               </div>
+            ) : currentError ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-destructive">{t('loading.error')} {(currentError as Error).message}</div>
+              </div>
+            ) : allData['my-votes'].length > 0 ? (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {allData['my-votes'].map((arb: any) => (
+                    <DisputeCard key={arb.id} arbitration={arb} />
+                  ))}
+                </div>
+                {hasMore && (
+                  <div className="flex justify-center pt-4">
+                    <Button variant="ghost" onClick={handleLoadMore} disabled={currentLoading}>
+                      {currentLoading ? t('loading.loading') : t('loading.loadMore')}
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               <EmptyState
                 icon={<Gavel className="h-12 w-12" />}

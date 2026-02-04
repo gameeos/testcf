@@ -114,7 +114,7 @@ export function ArbitrationDashboardPage() {
                 {t('arbitrationDashboard.notArbitrator')}
               </Badge>
             )}
-            <AddressDisplay address={currentAccount!} chars={4} />
+            {currentAccount && (<AddressDisplay address={currentAccount} chars={4} />)}
           </div>
         </div>
 

@@ -50,8 +50,7 @@
     "filterInvalid": "Invalid",
     "empty": "No Resolutions",
     "emptyDesc": "No resolutions found for the current filter",
-    "viewAll": "View All",
-    "loadMore": "Load More"
+    "viewAll": "View All"
   },
   "resolution": {
     "notFound": "Resolution Not Found",
@@ -243,8 +242,9 @@
     "awaitingRuling": "Awaiting Ruling"
   },
   "txHash": "Transaction Hash",
-  "loading":{
-    "loading":"loading...",
-    "error:":"Loading failed:"
+  "loading": {
+    "loadMore": "Load More",
+    "loading": "loading...",
+    "error:": "Loading failed:"
   }
 }

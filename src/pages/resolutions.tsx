@@ -110,7 +110,7 @@ export function ResolutionsPage() {
             {hasMore && (
               <div className="flex justify-center pt-4">
                 <Button variant="ghost" onClick={handleLoadMore} disabled={isLoading}>
-                  {isLoading ? t('loading.loading') : t('resolutions.loadMore')}
+                  {isLoading ? t('loading.loading') : t('loading.loadMore')}
                 </Button>
               </div>
             )}

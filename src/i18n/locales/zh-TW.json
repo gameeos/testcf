@@ -50,8 +50,7 @@
     "filterInvalid": "已作廢",
     "empty": "暫無提案",
     "emptyDesc": "當前篩選條件下沒有找到任何提案",
-    "viewAll": "查看全部",
-    "loadMore": "加載更多"
+    "viewAll": "查看全部"
   },
   "resolution": {
     "notFound": "提案不存在",
@@ -243,8 +242,9 @@
     "awaitingRuling": "等待裁決"
   },
   "txHash": "交易哈希",
-  "loading":{
-    "loading":"加载中...",
-    "error:":"加载失败:"
+  "loading": {
+    "loadMore": "加載更多",
+    "loading": "加载中...",
+    "error:": "加载失败:"
   }
 }

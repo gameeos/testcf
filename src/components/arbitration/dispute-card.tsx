@@ -22,6 +22,7 @@ export function DisputeCard({ arbitration }: DisputeCardProps) {
   if (!arbitration) {
     return null;
   }
+  console.log("arbitration:",arbitration)
 
   let { arbitratorCount: totalArbitrators } = useOOA();
     if (totalArbitrators === 0) {
@@ -48,15 +49,15 @@ export function DisputeCard({ arbitration }: DisputeCardProps) {
           <Badge
             variant="outline"
             className={
-              arbitration.finalized
+              arbitration.resolved
                 ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
                 : 'border-orange-500/50 bg-orange-500/10 text-orange-400'
             }
           >
-            {arbitration.finalized ? t('disputeCard.completed') : t('disputeCard.pendingVote')}
+            {arbitration.resolved ? t('disputeCard.completed') : t('disputeCard.pendingVote')}
           </Badge>
           <Badge variant="outline">
-            {arbitration.disputeType === 'Outcome' ? t('disputeCard.outcomeDispute') : t('disputeCard.ruleDispute')}
+            {arbitration.disputeType === 0 ? t('disputeCard.outcomeDispute') : t('disputeCard.ruleDispute')}
           </Badge>
         </div>
         <div className="space-y-1">

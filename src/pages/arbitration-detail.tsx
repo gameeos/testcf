@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PageLayout } from '@/components/layout/page-layout';
@@ -18,51 +18,47 @@ import { ArbitratorList } from '@/components/arbitration/arbitrator-list';
 import { AddressDisplay } from '@/components/shared/address-display';
 import { EmptyState } from '@/components/shared/empty-state';
 import {
-  getResolutionByDisputeId,
-  currentUserAddress,
-  isArbitrator,
-  hasVoted,
-} from '@/data/mock-data';
-import {
   ArrowLeft,
   FileText,
   Gavel,
-  ExternalLink,
-  FileIcon,
   Info,
   Scale,
 } from 'lucide-react';
+import { useOOA } from '@/lib/use-ooa';
+import { useArbitration } from '@/data/use-arbitration';
+import { hasVoted } from '@/data/resolution-utils';
+import { UserRejectedRequestError } from 'viem';
 
 export function ArbitrationDetailPage() {
   const { disputeId } = useParams<{ disputeId: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const { isArbitrator, currentAccount, arbitratorCount, vote, isWritePending, writeError } = useOOA();
+  let totalArbitrators = arbitratorCount || 0
 
-  const resolution = disputeId
-    ? getResolutionByDisputeId(disputeId)
-    : undefined;
+  const { arbitration } = useArbitration({ disputeId })
 
+  const { data: arb } = arbitration
   const [voted, setVoted] = useState(false);
   const [userVoteResult, setUserVoteResult] = useState<boolean | undefined>(
     undefined
   );
 
-  // 检查用户投票状态
-  const existingVote = disputeId
-    ? hasVoted(disputeId, currentUserAddress)
-    : undefined;
-  const userHasVoted = voted || !!existingVote;
-  const userVote = userVoteResult ?? existingVote?.support;
+  useEffect(() => {
+    if (writeError) {
+      console.error('Vote error:', writeError);
 
-  const isUserArbitrator = isArbitrator(currentUserAddress);
+      // 检查是否是用户取消签名
+      if (writeError instanceof UserRejectedRequestError ||
+        writeError.name === 'UserRejectedRequestError') {
+        console.error(writeError);
+      } else {
+        console.error(writeError.message);
+      }
+    }
+  }, [writeError]);
 
-  const handleVote = (support: boolean) => {
-    // 模拟投票
-    setVoted(true);
-    setUserVoteResult(support);
-  };
-
-  if (!resolution || !resolution.dispute || !resolution.arbitration) {
+  if (!arb) {
     return (
       <PageLayout>
         <EmptyState
@@ -78,11 +74,34 @@ export function ArbitrationDetailPage() {
     );
   }
 
-  const { dispute, arbitration } = resolution;
-  const isUnanimousRequired = arbitration.totalArbitrators < 3;
+  // 检查用户投票状态
+  const existingVote = disputeId
+    ? hasVoted(arb.votes, currentAccount!)
+    : undefined;
+  const userHasVoted = voted || !!existingVote;
+  const userVote = userVoteResult ?? existingVote?.support;
+
+  const isUserArbitrator = isArbitrator
+
+
+
+  /**
+   *
+   * @param support 为true表示支持争议方,false表示支持原提议
+   */
+  const handleVote = async (support: boolean) => {
+    console.log("support:", support)
+    await vote(BigInt(arb.id.replace("dis-", "")), support === false)
+    setVoted(true);
+    setUserVoteResult(support);
+  };
+
+
+
+  const isUnanimousRequired = totalArbitrators < 3;
   const threshold = isUnanimousRequired
-    ? arbitration.totalArbitrators
-    : Math.ceil((arbitration.totalArbitrators * 2) / 3);
+    ? totalArbitrators
+    : Math.ceil((totalArbitrators * 2) / 3);
 
   const formatTime = (timestamp: number) => {
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
@@ -112,21 +131,21 @@ export function ArbitrationDetailPage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-foreground">
-                Dispute #{dispute.id}
+                Dispute #{arb.id}
               </h1>
               <Badge
                 variant="outline"
                 className={
-                  arbitration.finalized
+                  arb.finalized
                     ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
                     : 'border-orange-500/50 bg-orange-500/10 text-orange-400'
                 }
               >
-                {arbitration.finalized ? t('arbitration.finished') : t('arbitration.inProgress')}
+                {arb.finalized ? t('arbitration.finished') : t('arbitration.inProgress')}
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              Resolution #{resolution.id} | Market #{resolution.marketId}
+              Resolution #{arb.resolutionId} | Market #{arb.marketId}
             </p>
           </div>
         </div>
@@ -147,22 +166,22 @@ export function ArbitrationDetailPage() {
                 <Badge
                   variant="outline"
                   className={
-                    resolution.proposedOutcome === 'YES'
+                    arb.resolutionOutcome === 'YES'
                       ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
                       : 'border-red-500/50 bg-red-500/10 text-red-400'
                   }
                 >
-                  {resolution.proposedOutcome}
+                  {arb.resolutionOutcome}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('resolution.proposer')}</span>
-                <AddressDisplay address={resolution.proposer} chars={4} />
+                <AddressDisplay address={arb.proposer} chars={4} />
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(resolution.proposeTime)}
+                  {formatTime(Number(arb.proposeTime))}
                 </span>
               </div>
             </CardContent>
@@ -182,22 +201,22 @@ export function ArbitrationDetailPage() {
                 <Badge
                   variant="outline"
                   className={
-                    dispute.challengedOutcome === 'YES'
+                    arb.challengedOutcome === 'YES'
                       ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
                       : 'border-red-500/50 bg-red-500/10 text-red-400'
                   }
                 >
-                  {dispute.challengedOutcome}
+                  {arb.challengedOutcome}
                 </Badge>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('dispute.challenger')}</span>
-                <AddressDisplay address={dispute.challenger} chars={4} />
+                <AddressDisplay address={arb.challenger} chars={4} />
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('dispute.disputeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(dispute.disputeTime)}
+                  {formatTime(Number(arb.disputeTime))}
                 </span>
               </div>
             </CardContent>
@@ -211,16 +230,16 @@ export function ArbitrationDetailPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <h3 className="font-medium text-foreground">
-              {resolution.market.title}
+              {arb.market.title}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {resolution.market.description}
+              {arb.market.description}
             </p>
             <Separator />
             <div>
               <span className="text-sm text-muted-foreground">{t('resolution.settlementRules')}</span>
               <p className="mt-1 text-sm text-foreground">
-                {resolution.market.rules}
+                {arb.market.rules}
               </p>
             </div>
           </CardContent>
@@ -232,50 +251,50 @@ export function ArbitrationDetailPage() {
             <CardTitle className="text-base">{t('arbitration.disputeReason')}</CardTitle>
             <CardDescription>
               {t('arbitration.disputeTypeLabel')}
-              {dispute.disputeType === 'Outcome' ? t('dispute.typeOutcome') : t('dispute.typeRule')}
+              {arb.disputeType === 'Outcome' ? t('dispute.typeOutcome') : t('dispute.typeRule')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="rounded-lg bg-muted/20 p-4">
-              <p className="text-foreground">{dispute.reason}</p>
+              <p className="text-foreground">{arb.reason}</p>
             </div>
 
-            {(dispute.evidenceUrls.length > 0 ||
+            {/* {(dispute.evidenceUrls.length > 0 ||
               dispute.evidenceFiles.length > 0) && (
-              <>
-                <Separator />
-                <div className="space-y-2">
-                  <span className="text-sm font-medium text-foreground">
-                    {t('dispute.evidence')}
-                  </span>
+                <>
+                  <Separator />
                   <div className="space-y-2">
-                    {dispute.evidenceUrls.map((url, index) => (
-                      <a
-                        key={index}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/10 px-3 py-2 text-sm text-blue-400 transition-colors hover:bg-muted/20"
-                      >
-                        <ExternalLink className="h-4 w-4 shrink-0" />
-                        <span className="truncate">{url}</span>
-                      </a>
-                    ))}
-                    {dispute.evidenceFiles.map((file, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/10 px-3 py-2 text-sm text-foreground"
-                      >
-                        <FileIcon className="h-4 w-4 shrink-0" />
-                        <span>{file}</span>
-                      </div>
-                    ))}
+                    <span className="text-sm font-medium text-foreground">
+                      {t('dispute.evidence')}
+                    </span>
+                    <div className="space-y-2">
+                      {dispute.evidenceUrls.map((url, index) => (
+                        <a
+                          key={index}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/10 px-3 py-2 text-sm text-blue-400 transition-colors hover:bg-muted/20"
+                        >
+                          <ExternalLink className="h-4 w-4 shrink-0" />
+                          <span className="truncate">{url}</span>
+                        </a>
+                      ))}
+                      {dispute.evidenceFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/10 px-3 py-2 text-sm text-foreground"
+                        >
+                          <FileIcon className="h-4 w-4 shrink-0" />
+                          <span>{file}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </>
-            )}
+                </>
+              )} */}
 
-            {dispute.txHash && (
+            {/* {dispute.txHash && (
               <>
                 <Separator />
                 <div className="flex items-center justify-between">
@@ -287,7 +306,7 @@ export function ArbitrationDetailPage() {
                   </code>
                 </div>
               </>
-            )}
+            )} */}
           </CardContent>
         </Card>
 
@@ -304,13 +323,13 @@ export function ArbitrationDetailPage() {
               <div>
                 <span className="text-muted-foreground">{t('arbitration.currentArbitrators')}</span>
                 <span className="ml-1 font-medium text-foreground">
-                  {arbitration.totalArbitrators}
+                  {totalArbitrators}
                 </span>
               </div>
               <div>
                 <span className="text-muted-foreground">{t('arbitration.requiredToPass')}</span>
                 <span className="ml-1 font-medium text-foreground">
-                  {threshold}/{arbitration.totalArbitrators} {t('arbitration.votes')} (
+                  {threshold}/{totalArbitrators} {t('arbitration.votes')} (
                   {isUnanimousRequired ? t('arbitration.unanimousRequired') : t('arbitration.majority')})
                 </span>
               </div>
@@ -338,9 +357,9 @@ export function ArbitrationDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <VoteProgress arbitration={arbitration} />
+            <VoteProgress arbitration={arb} />
             <Separator />
-            <ArbitratorList arbitration={arbitration} />
+            <ArbitratorList arbitration={arb} />
           </CardContent>
         </Card>
 
@@ -357,7 +376,7 @@ export function ArbitrationDetailPage() {
               <VotePanel
                 hasVoted={userHasVoted}
                 userVote={userVote}
-                finalized={arbitration.finalized}
+                finalized={arb.finalized}
                 onVote={handleVote}
               />
             </CardContent>

@@ -1,4 +1,4 @@
-import type { Arbitration, Dispute, Resolution, ResolutionStatus } from '@/types';
+import type { Arbitration, ArbitrationVote, Dispute, Resolution, ResolutionStatus } from '@/types';
 
 // RPC 返回的数据类型（与后端保持一致）
 export interface RPCResolution {
@@ -59,4 +59,8 @@ export function transformResolution(data: RPCResolution): Resolution {
 
 
   return reso as Resolution
+}
+
+export function hasVoted(votes: ArbitrationVote[], arbitrator: string) {
+  return votes.find((v) => v.arbitrator === arbitrator)
 }

@@ -14,12 +14,12 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
   if (totalArbitrators === 0) {
     totalArbitrators = 3;
   }
-  const { yesVotes, noVotes } = arbitration;
+  const { yesVotes, noVotes } = arbitration;  // yes表示支持原提议，no表示支持挑战者提议
   const votedCount = yesVotes + noVotes;
   const pendingCount = totalArbitrators - votedCount;
 
-  const yesPercentage = totalArbitrators > 0 ? (yesVotes / totalArbitrators) * 100 : 0;
-  const noPercentage = totalArbitrators > 0 ? (noVotes / totalArbitrators) * 100 : 0;
+  const yesPercentage = totalArbitrators > 0 ? (noVotes / totalArbitrators) * 100 : 0; // 支持挑战者
+  const noPercentage = totalArbitrators > 0 ? (yesVotes / totalArbitrators) * 100 : 0;   // 反对挑战者
 
   // 判断是否通过
   // 委员数量 < 3：必须全票通过
@@ -28,7 +28,7 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
   const threshold = isUnanimousRequired
     ? totalArbitrators
     : Math.ceil((totalArbitrators * 2) / 3);
-  const passed = yesVotes >= threshold;
+  const passed = noVotes >= threshold;
 
   return (
     <div className={cn('space-y-3', className)}>
@@ -51,11 +51,11 @@ export function VoteProgress({ arbitration, className }: VoteProgressProps) {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            <span className="text-emerald-400">{t('voteProgress.support')} {yesVotes}</span>
+            <span className="text-emerald-400">{t('voteProgress.support')} {noVotes}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
-            <span className="text-red-400">{t('voteProgress.oppose')} {noVotes}</span>
+            <span className="text-red-400">{t('voteProgress.oppose')} {yesVotes}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground/30" />

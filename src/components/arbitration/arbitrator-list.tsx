@@ -27,9 +27,9 @@ export function ArbitratorList({ arbitration, className }: ArbitratorListProps) 
           key={vote.arbitrator}
           className={cn(
             'flex items-center justify-between rounded-lg border px-3 py-2',
-            vote.support === true &&
-            'border-emerald-500/30 bg-emerald-500/5',
             vote.support === false &&
+            'border-emerald-500/30 bg-emerald-500/5',
+            vote.support === true &&
             'border-red-500/30 bg-red-500/5',
             vote === undefined &&
             'border-muted-foreground/20 bg-muted/10'
@@ -56,7 +56,7 @@ export function ArbitratorList({ arbitration, className }: ArbitratorListProps) 
           <div className="flex items-center gap-2">
             {vote ? (
               <>
-                {vote.support ? (
+                {vote.support === false ? (
                   <span className="flex items-center gap-1 text-sm text-emerald-400">
                     <Check className="h-4 w-4" />
                     {t('arbitratorList.support')}

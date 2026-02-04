@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRPC } from '../lib/rpc-client';
 
 interface UseArbitrationOptions {
+    disputeId?: string;
     address?: string;
     resolved?: boolean;
     page?: number;
@@ -15,6 +16,7 @@ export function useArbitration(options?: UseArbitrationOptions) {
     const activeTab = options?.activeTab ?? 'pending';
     const page = options?.page || 1;
     const pageSize = options?.pageSize || 6;
+    const disputeId = options?.disputeId
 
     // 统计数据查询 - 始终加载
     const statistics = useQuery({
@@ -57,7 +59,6 @@ export function useArbitration(options?: UseArbitrationOptions) {
         refetchOnWindowFocus: false,
         gcTime: 0, // 切换 tab 后立即清除缓存
     });
-    console.log("completedArbitrations:",completedArbitrations.data)
 
     // 我的投票记录 - 仅在 my-votes tab 激活时加载
     const myVotes = useQuery({
@@ -72,10 +73,22 @@ export function useArbitration(options?: UseArbitrationOptions) {
         gcTime: 0, // 切换 tab 后立即清除缓存
     });
 
+    const arbitration = useQuery({
+        queryKey: ['fetchArbitration', disputeId],
+        queryFn: async () => {
+            const result = await rpc.request('fetchArbitration', [disputeId]);
+            return result;
+        },
+        enabled: !!disputeId,
+        staleTime: 30_000,
+        refetchOnWindowFocus: false,
+    })
+
     return {
         statistics,
         pendingArbitrations,
         completedArbitrations,
-        myVotes
+        myVotes,
+        arbitration
     }
 }

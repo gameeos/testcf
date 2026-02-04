@@ -18,7 +18,7 @@ export function ArbitrationDashboardPage() {
   const { isArbitrator, currentAccount } = useOOA();
   const isUserArbitrator = isArbitrator;
 
-  const { statistics, pendingArbitrations, completedArbitrations, myVotes } = useArbitration({ address: currentAccount, page: 1, pageSize: 20 })
+  const { statistics, pendingArbitrations, completedArbitrations, myVotes } = useArbitration({ address: currentAccount, activeTab, page: 1, pageSize: 20 })
 
   const { data: stats, isLoading: statsLoading, error: statsError } = statistics
   const { data: pendingData, isLoading: pendingLoading, error: pendingError } = pendingArbitrations

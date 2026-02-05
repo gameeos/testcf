@@ -171,6 +171,8 @@
     "invalidResult": "雙方押金返還或扣除"
   },
   "confirmDialog": {
+    "approveTitle": "批准合约权限",
+    "approveConfirm": "批准",
     "submitTitle": "確認提交仲裁申請",
     "submitDesc": "您將質押 {{amount}} USDT 提交此仲裁申請。如果仲裁結果不支持您的主張，押金將被沒收。確定要繼續嗎？",
     "submitConfirm": "確認提交",

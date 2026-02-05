@@ -40,6 +40,7 @@ import { useChallengeMutation, useCreateDisputeId } from '@/data/use-arbitration
 import { useResolution } from '@/data/use-resolution';
 import { useOOA } from '@/lib/use-ooa';
 import { useWallet } from '@/lib/use-wallet';
+import { formatUnits } from 'viem';
 
 export function ChallengeNewPage() {
   const [searchParams] = useSearchParams();
@@ -50,7 +51,6 @@ export function ChallengeNewPage() {
   const disputeType = 0
 
   const { data: resolution } = useResolution(resolutionId);
-  const { currentAccount } = useOOA();
   const { signMessage } = useWallet()
 
   // 表单状态
@@ -64,8 +64,13 @@ export function ChallengeNewPage() {
   // const [evidenceFiles, setEvidenceFiles] = useState<string[]>([]);
 
   // 弹窗状态
+  const [showApprove, setShowApprove] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // 合约调用
+  const { challenge, isWritePending, isWriteError, writeError, transactionHash, challengeBond, challengeBondDecimals, getAllowance, currentAccount, approveBond, outcomeToBytes32 } = useOOA()
+  const bond = challengeBond === undefined || challengeBond === null ? 500 : Number(formatUnits(challengeBond as bigint, challengeBondDecimals))
 
   useEffect(() => {
     const genId = async () => {
@@ -106,9 +111,30 @@ export function ChallengeNewPage() {
   //   setEvidenceFiles(evidenceFiles.filter((_, i) => i !== index));
   // };
 
-  const handleSubmit = () => {
-    setShowConfirm(true);
+  const handleSubmit = async () => {
+    if (currentAccount) {
+      const allowance = await getAllowance(currentAccount)
+      if (allowance < (challengeBond as bigint)) {
+        console.log("approve:", allowance, challengeBond)
+        setShowApprove(true)
+      } else {
+        setShowConfirm(true);
+      }
+    } else {
+      // TODO: 提示连接钱包
+    }
   };
+
+  const handleApprove = async () => {
+    setShowApprove(false)
+    try {
+      const hash = await approveBond(bond)
+      console.debug("approve hash:", hash)
+      setShowConfirm(true);
+    } catch (error) {
+      console.error("approve error:", error)
+    }
+  }
 
   const challengeMutation = useChallengeMutation()
   const handleConfirm = async () => {
@@ -127,13 +153,15 @@ export function ChallengeNewPage() {
           sign: sign
         })
         if (result.success) {
-          // TODO: 调用上链方法
+          const hash = await challenge(BigInt(disputeId), BigInt(resolutionId), BigInt(resolution!.marketId), disputeType, outcomeToBytes32(challengedOutcome), disputeId)
+          console.debug("challenge hash:", hash)
+          setShowSuccess(true)
         }
       } else {
         console.error("Signature error")
       }
     } catch (error) {
-      console.error("handleConfirm error:", error)
+      console.error("challenge error:", error)
     }
   };
 
@@ -258,7 +286,7 @@ export function ChallengeNewPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(resolution.proposeTime*1000)}
+                  {formatTime(resolution.proposeTime * 1000)}
                 </span>
               </div>
             </div>
@@ -466,12 +494,22 @@ export function ChallengeNewPage() {
           </Button>
         </div>
 
+        {/* 授权弹窗 */}
+        <ConfirmDialog
+          open={showApprove}
+          onOpenChange={setShowApprove}
+          title={t('confirmDialog.approveTitle')}
+          description={t('confirmDialog.submitDesc', { amount: bond })}
+          confirmText={t('confirmDialog.approveConfirm')}
+          onConfirm={handleApprove}
+        />
+
         {/* 确认弹窗 */}
         <ConfirmDialog
           open={showConfirm}
           onOpenChange={setShowConfirm}
           title={t('confirmDialog.submitTitle')}
-          description={t('confirmDialog.submitDesc', { amount: 500 })}
+          description={t('confirmDialog.submitDesc', { amount: bond })}
           confirmText={t('confirmDialog.submitConfirm')}
           onConfirm={handleConfirm}
         />

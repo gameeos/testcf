@@ -49,8 +49,7 @@ export function ArbitrationDetailPage() {
       console.error('Vote error:', writeError);
 
       // 检查是否是用户取消签名
-      if (writeError instanceof UserRejectedRequestError ||
-        writeError.name === 'UserRejectedRequestError') {
+      if (writeError instanceof UserRejectedRequestError) {
         console.error(writeError);
       } else {
         console.error(writeError.message);
@@ -91,7 +90,12 @@ export function ArbitrationDetailPage() {
    */
   const handleVote = async (support: boolean) => {
     console.log("support:", support)
-    await vote(BigInt(arb.id.replace("dis-", "")), support === false)
+    try {
+      const hash = await vote(BigInt(arb.id.replace("dis-", "")), support === false)
+      console.debug("vote hash:", hash)
+    } catch (error) {
+      console.error("vote error:", error)
+    }
     setVoted(true);
     setUserVoteResult(support);
   };

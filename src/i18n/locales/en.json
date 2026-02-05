@@ -171,6 +171,8 @@
     "invalidResult": "Bond returned to both parties or deducted"
   },
   "confirmDialog": {
+    "approveTitle": "approve USDT contract",
+    "approveConfirm": "approve",
     "submitTitle": "Confirm Challenge Submission",
     "submitDesc": "You will stake {{amount}} USDT to submit this challenge. If the arbitration result does not support your claim, the bond will be forfeited. Are you sure you want to continue?",
     "submitConfirm": "Confirm Submit",

@@ -22,7 +22,7 @@ export function ArbitratorList({ arbitration, className }: ArbitratorListProps) 
 
   return (
     <div className={cn('space-y-2', className)}>
-      {votes.map((vote) => (
+      {(votes || []).map((vote) => (
         <div
           key={vote.arbitrator}
           className={cn(

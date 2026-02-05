@@ -1,166 +1,67 @@
 'use client'
 
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import { useWallet } from './use-wallet'
+import {
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import { readContract } from 'wagmi/actions'
+import { parseUnits, type Address } from 'viem'
 import abi from '@/data/abi/OptimisticOracleArbitration.json'
-import { type Address } from 'viem'
+import { erc20Abi } from 'viem'
+import { config } from './web3-config'
+import { useWallet } from './use-wallet'
 
-// 合约地址 - 需要根据实际部署情况配置
 const CONTRACT_ADDRESS = '0xDAb94888b43577eC2D974ffEc5bA56909573e3a5' as Address
+const USD_ADDRESS = '0x75F827F0334a18E40b31342161579246b8447C4c' as Address // test:0x75F827F0334a18E40b31342161579246b8447C4c base:0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 
-// 定义返回类型
-export interface UseOOAReturnType {
-  // 读方法结果
-  isArbitrator: boolean
-  isProposer: boolean
-  isPlatformProposer: boolean
-  proposeBond: bigint | undefined
-  challengeBond: bigint | undefined
-  challengeWindow: bigint | undefined
-  arbitratorCount: number
-  currentAccount: `0x${string}` | undefined
-
-  // 读方法函数
-  refetchIsArbitrator: () => void
-  getResolution: (resolutionId: bigint) => any
-  getDispute: (disputeId: bigint) => any
-  getArbitration: (disputeId: bigint) => any
-  getVote: (disputeId: bigint, arbitrator: Address) => any
-
-  // 写方法
-  createResolution: (marketId: bigint, resolutionId: bigint, disputeWindowTime: bigint, endTime: bigint) => Promise<void>
-  proposeOutcome: (marketId: bigint, outcome: `0x${string}`) => Promise<void>
-  challenge: (disputeId: bigint, resolutionId: bigint, marketId: bigint, disputeType: 0 | 1, challengedOutcome: `0x${string}`, reason: string) => Promise<void>
-  vote: (disputeId: bigint, support: boolean) => Promise<void>
-  finalizeResolution: (marketId: bigint) => Promise<void>
-
-  // 交易状态
-  isWritePending: boolean
-  isConfirming: boolean
-  isConfirmed: boolean
-  writeError: Error | null
-  transactionHash: Address | undefined
-
-  // 辅助函数
-  outcomeToBytes32: (outcome: 'YES' | 'NO') => `0x${string}`
-  bytes32ToOutcome: (bytes32: `0x${string}`) => 'YES' | 'NO'
-  checkHasVoted: (disputeId: bigint) => Promise<boolean>
-}
-
-/**
- * Optimistic Oracle Arbitration 合约交互 Hook
- */
-export function useOOA(): UseOOAReturnType {
+export function useOOA() {
   const { address } = useWallet()
+  const challengeBondDecimals = 6
   const currentAccount = address
 
-  // ============ 读方法 ============
+  /* ======================================================
+   * 声明式读（用于 UI）
+   * ====================================================== */
 
-  /**
-   * 检查指定地址是否为仲裁委员
-   */
-  const { data: isArbitratorData, refetch: refetchIsArbitrator } = useReadContract({
+  const { data: isArbitratorData } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: 'arbitrators',
     args: address ? [address] : undefined,
-    query: {
-      enabled: !!address,
-    },
+    query: { enabled: !!address },
   })
 
-  const isArbitrator = isArbitratorData ? Boolean(isArbitratorData) : false
+  const isArbitrator = Boolean(isArbitratorData)
 
-  /**
-   * 获取提案 Bond 金额
-   */
+  const { data: isProposerData } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi,
+    functionName: 'proposers',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  })
+
+  const isProposer = isProposerData && Array.isArray(isProposerData) ? Boolean(isProposerData[0]) : false
+  const isPlatformProposer = isProposerData && Array.isArray(isProposerData) ? Boolean(isProposerData[1]) : false
+
   const { data: proposeBond } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: 'proposeBond',
   })
 
-  /**
-   * 获取挑战 Bond 金额
-   */
   const { data: challengeBond } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: 'challengeBond',
   })
 
-  /**
-   * 获取挑战窗口时间（秒）
-   */
   const { data: challengeWindow } = useReadContract({
     address: CONTRACT_ADDRESS,
     abi,
     functionName: 'challengeWindow',
   })
-
-  /**
-   * 检查是否为提案者
-   */
-  const { data: isProposerData } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi,
-    functionName: 'proposers',
-    args: address ? [address] : undefined,
-    query: {
-      enabled: !!address,
-    },
-  })
-
-  const isProposer = isProposerData && Array.isArray(isProposerData) ? Boolean(isProposerData[0]) : false
-  const isPlatformProposer = isProposerData && Array.isArray(isProposerData) ? Boolean(isProposerData[1]) : false
-
-  /**
-   * 获取提案信息
-   */
-  const getResolution = (resolutionId: bigint) => {
-    return useReadContract({
-      address: CONTRACT_ADDRESS,
-      abi,
-      functionName: 'getResolution',
-      args: [resolutionId],
-    })
-  }
-
-  /**
-   * 获取争议信息
-   */
-  const getDispute = (disputeId: bigint) => {
-    return useReadContract({
-      address: CONTRACT_ADDRESS,
-      abi,
-      functionName: 'getDispute',
-      args: [disputeId],
-    })
-  }
-
-  /**
-   * 获取仲裁信息
-   */
-  const getArbitration = (disputeId: bigint) => {
-    return useReadContract({
-      address: CONTRACT_ADDRESS,
-      abi,
-      functionName: 'getArbitration',
-      args: [disputeId],
-    })
-  }
-
-  /**
-   * 获取投票状态
-   */
-  const getVote = (disputeId: bigint, arbitrator: Address) => {
-    return useReadContract({
-      address: CONTRACT_ADDRESS,
-      abi,
-      functionName: 'getVote',
-      args: [disputeId, arbitrator],
-    })
-  }
 
   const { data: arbitratorCount } = useReadContract({
     address: CONTRACT_ADDRESS,
@@ -168,66 +69,120 @@ export function useOOA(): UseOOAReturnType {
     functionName: 'arbitratorCount',
   })
 
-  // ============ 写方法 ============
+  /* ======================================================
+   * 即时读（action，用于函数调用）
+   * ====================================================== */
+
+  const getAllowance = async (account: Address) => {
+    return await readContract(config, {
+      address: USD_ADDRESS,
+      abi: erc20Abi,
+      functionName: 'allowance',
+      args: [account, CONTRACT_ADDRESS],
+    })
+  }
+
+  const getResolution = async (resolutionId: bigint) => {
+    return readContract(config, {
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'getResolution',
+      args: [resolutionId],
+    })
+  }
+
+  const getDispute = async (disputeId: bigint) => {
+    return readContract(config, {
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'getDispute',
+      args: [disputeId],
+    })
+  }
+
+  const getArbitration = async (disputeId: bigint) => {
+    return readContract(config, {
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'getArbitration',
+      args: [disputeId],
+    })
+  }
+
+  const getVote = async (disputeId: bigint, arbitrator: Address) => {
+    return readContract(config, {
+      address: CONTRACT_ADDRESS,
+      abi,
+      functionName: 'getVote',
+      args: [disputeId, arbitrator],
+    })
+  }
+
+  const checkHasVoted = async (disputeId: bigint): Promise<boolean> => {
+    if (!address) return false
+    const vote = await getVote(disputeId, address)
+    return Array.isArray(vote) ? Boolean(vote[1]) : false
+  }
+
+  /* ======================================================
+   * 写合约
+   * ====================================================== */
 
   const {
     data: hash,
-    writeContract,
+    mutateAsync: writeContractAsync,
     isPending: isWritePending,
+    isError: isWriteError,
     error: writeError,
   } = useWriteContract()
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+  const {
+    isLoading: isConfirming,
+    isSuccess: isConfirmed,
+  } = useWaitForTransactionReceipt({
     hash,
+    query: { enabled: !!hash },
   })
 
-  /**
-   * 创建提案
-   */
-  const createResolution = async (
+  const approveBond = (amount: number) =>
+    writeContractAsync({
+      address: USD_ADDRESS,
+      abi: erc20Abi,
+      functionName: 'approve',
+      args: [CONTRACT_ADDRESS, parseUnits(amount.toString(), challengeBondDecimals)],
+    })
+
+
+  const createResolution = (
     marketId: bigint,
     resolutionId: bigint,
     disputeWindowTime: bigint,
-    endTime: bigint
-  ) => {
-    return writeContract({
+    endTime: bigint,
+  ) =>
+    writeContractAsync({
       address: CONTRACT_ADDRESS,
       abi,
       functionName: 'createResolution',
       args: [marketId, resolutionId, disputeWindowTime, endTime],
     })
-  }
 
-  /**
-   * 提出结果
-   */
-  const proposeOutcome = async (marketId: bigint, outcome: `0x${string}`) => {
-    return writeContract({
+  const proposeOutcome = (marketId: bigint, outcome: `0x${string}`) =>
+    writeContractAsync({
       address: CONTRACT_ADDRESS,
       abi,
       functionName: 'proposeOutcome',
       args: [marketId, outcome],
     })
-  }
 
-  /**
-   * 挑战提案
-   * @param disputeId 争议ID
-   * @param resolutionId 提案ID
-   * @param marketId 市场ID
-   * @param disputeType 争议类型 (0 = Outcome, 1 = Rule)
-   * @param challengedOutcome 挑战的结果 (bytes32)
-   * @param reason 挑战理由
-   */
-  const challenge = async (
+  const challenge = (
     disputeId: bigint,
     resolutionId: bigint,
     marketId: bigint,
-    disputeType: 0 | 1, // 0 = Outcome, 1 = Rule
+    disputeType: 0 | 1,
     challengedOutcome: `0x${string}`,
-    reason: string
-  ) => {
-    return writeContract({
+    reason: string,
+  ) =>
+    writeContractAsync({
       address: CONTRACT_ADDRESS,
       abi,
       functionName: 'challenge',
@@ -240,33 +195,26 @@ export function useOOA(): UseOOAReturnType {
         reason,
       ],
     })
-  }
 
-  /**
-   * 仲裁投票
-   */
-  const vote = async (disputeId: bigint, support: boolean) => {
-    return writeContract({
+  const vote = (disputeId: bigint, support: boolean) =>
+    writeContractAsync({
       address: CONTRACT_ADDRESS,
       abi,
       functionName: 'vote',
       args: [disputeId, support],
     })
-  }
 
-  /**
-   * 最终确认提案
-   */
-  const finalizeResolution = async (marketId: bigint) => {
-    return writeContract({
+  const finalizeResolution = (marketId: bigint) =>
+    writeContractAsync({
       address: CONTRACT_ADDRESS,
       abi,
       functionName: 'finalizeResolution',
       args: [marketId],
     })
-  }
 
-  // ============ 辅助函数 ============
+  /* ======================================================
+   * 工具函数
+   * ====================================================== */
 
   /**
    * 转换 YES/NO 到 bytes32
@@ -287,42 +235,29 @@ export function useOOA(): UseOOAReturnType {
     return str === 'YES' ? 'YES' : 'NO'
   }
 
-  /**
-   * 检查当前用户是否已投票
-   */
-  const checkHasVoted = async (disputeId: bigint): Promise<boolean> => {
-    if (!address) return false
-    const voteResult = getVote(disputeId, address)
-    const voteData = await new Promise<any>((resolve) => {
-      if (voteResult.data !== undefined) {
-        resolve(voteResult.data)
-      } else {
-        resolve(undefined)
-      }
-    })
-    return voteData && Array.isArray(voteData) ? Boolean(voteData[1]) : false // 第二个参数是 voted
-  }
-
   return {
-    // 读方法结果
+    // 常量
+    challengeBondDecimals,
+    // 状态
+    currentAccount,
     isArbitrator,
     isProposer,
     isPlatformProposer,
-    proposeBond: (proposeBond as bigint | undefined),
-    challengeBond: (challengeBond as bigint | undefined),
-    challengeWindow: (challengeWindow as bigint | undefined),
+    proposeBond,
+    challengeBond,
+    challengeWindow,
     arbitratorCount: Number(arbitratorCount),
-    currentAccount,
 
-    // 读方法函数
-    refetchIsArbitrator,
+    // 读
+    getAllowance,
     getResolution,
     getDispute,
     getArbitration,
     getVote,
+    checkHasVoted,
 
-
-    // 写方法
+    // 写
+    approveBond,
     createResolution,
     proposeOutcome,
     challenge,
@@ -330,15 +265,15 @@ export function useOOA(): UseOOAReturnType {
     finalizeResolution,
 
     // 交易状态
+    transactionHash: hash,
     isWritePending,
     isConfirming,
     isConfirmed,
+    isWriteError,
     writeError,
-    transactionHash: hash,
 
-    // 辅助函数
+    // utils
     outcomeToBytes32,
     bytes32ToOutcome,
-    checkHasVoted,
   }
 }

@@ -21,8 +21,10 @@ export interface Market {
 // 提案信息
 export interface Resolution {
   id: string;
+  hashId: string;
   resolutionId: string;
   marketId: string;
+  marketHashId:string;
   market: Market;
   proposedOutcome: 'YES' | 'NO';
   proposer: string;
@@ -40,7 +42,9 @@ export interface Resolution {
 export interface Dispute {
   id: string;
   resolutionId: string;
+  resolutionHashId: string;
   marketId: string;
+  marketHashId:string;
   disputeType: DisputeType;
   challengedOutcome: 'YES' | 'NO';
   challenger: string;

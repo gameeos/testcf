@@ -3,8 +3,10 @@ import type { Arbitration, ArbitrationVote, Dispute, Resolution, ResolutionStatu
 // RPC 返回的数据类型（与后端保持一致）
 export interface RPCResolution {
   id: string;
+  hashId: string;
   resolutionId: string;
   marketId: string;
+  marketHashId: string;
   market: {
     id: string;
     title: string;
@@ -36,8 +38,10 @@ export const statusMap: Record<number, ResolutionStatus> = {
 export function transformResolution(data: RPCResolution): Resolution {
   const reso = {
     id: data.id,
+    hashId: data.hashId,
     resolutionId: data.resolutionId,
     marketId: data.marketId,
+    marketHashId: data.marketHashId,
     market: {
       id: data.market.id,
       title: data.market.title,

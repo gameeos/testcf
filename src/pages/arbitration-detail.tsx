@@ -75,7 +75,7 @@ export function ArbitrationDetailPage() {
 
   // 检查用户投票状态
   const existingVote = disputeId
-    ? hasVoted(arb.votes, currentAccount!)
+    ? hasVoted(arb.votes || [], currentAccount!)
     : undefined;
   const userHasVoted = voted || !!existingVote;
   const userVote = userVoteResult ?? existingVote?.support;
@@ -91,7 +91,7 @@ export function ArbitrationDetailPage() {
   const handleVote = async (support: boolean) => {
     console.log("support:", support)
     try {
-      const hash = await vote(BigInt(arb.id.replace("dis-", "")), support === false)
+      const hash = await vote(BigInt(arb.hashId), support === false)
       console.debug("vote hash:", hash)
     } catch (error) {
       console.error("vote error:", error)

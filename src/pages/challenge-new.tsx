@@ -140,12 +140,12 @@ export function ChallengeNewPage() {
   const handleConfirm = async () => {
     setShowConfirm(false);
     try {
-      const sign = await signMessage(`${disputeId}${resolutionId}${resolution!.marketId}${disputeType}${challengedOutcome}${reason}`)
+      const sign = await signMessage(`${disputeId}${resolution?.hashId}${resolution?.marketHashId}${disputeType}${challengedOutcome}${reason}`)
       if (sign) {
         const result = await challengeMutation.mutateAsync({
           id: disputeId,
-          resolutionId: resolutionId,
-          marketId: resolution!.marketId,
+          resolutionId: resolution!.hashId,
+          marketId: resolution!.marketHashId,
           type: disputeType,
           outcome: challengedOutcome,
           reason: reason,
@@ -153,7 +153,7 @@ export function ChallengeNewPage() {
           sign: sign
         })
         if (result.success) {
-          const hash = await challenge(BigInt(disputeId), BigInt(resolutionId), BigInt(resolution!.marketId), disputeType, outcomeToBytes32(challengedOutcome), disputeId)
+          const hash = await challenge(BigInt(disputeId), BigInt(resolution!.hashId), BigInt(resolution!.marketHashId), disputeType, outcomeToBytes32(challengedOutcome), disputeId)
           console.debug("challenge hash:", hash)
           setShowSuccess(true)
         }
@@ -239,7 +239,7 @@ export function ChallengeNewPage() {
           <div>
             <h1 className="text-xl font-bold text-foreground">{t('challenge.title')}</h1>
             <p className="text-sm text-muted-foreground">
-              {t('challenge.subtitle', { id: resolutionId })}
+              {t('challenge.subtitle', { id: resolution.id })}
             </p>
           </div>
         </div>

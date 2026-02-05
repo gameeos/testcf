@@ -149,7 +149,7 @@ export function DisputeCard({ arbitration }: DisputeCardProps) {
 
       <CardFooter>
         <Button variant="outline" className="w-full" asChild>
-          <Link to={`/arbitration/${arbitration.id}`}>
+          <Link to={`/arbitration/${arbitration.hashId}`}>
             {t('disputeCard.viewDetails')}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

@@ -241,7 +241,7 @@ export function ResolutionDetailPage() {
                   </p>
                 </div>
                 <Button asChild>
-                  <Link to={`/challenge/new?resolutionId=${resolution.id}`}>
+                  <Link to={`/challenge/new?resolutionId=${resolution.hashId}`}>
                     {t('resolution.applyArbitration')}
                   </Link>
                 </Button>

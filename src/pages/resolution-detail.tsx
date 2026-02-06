@@ -71,6 +71,8 @@ export function ResolutionDetailPage() {
     resolution.challengeDeadline > Date.now();
 
   const formatTime = (timestamp: number) => {
+    if(!timestamp)''
+    timestamp = Number(timestamp) > 1e12 ? timestamp : timestamp * 1000
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
     return new Date(timestamp).toLocaleString(locale, {
       year: 'numeric',
@@ -141,7 +143,7 @@ export function ResolutionDetailPage() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('resolution.marketEndTime')}</span>
                   <span className="text-foreground">
-                    {formatTime(Number(resolution.endTime)*1000)}
+                    {formatTime(resolution.endTime)}
                   </span>
                 </div>
               </div>
@@ -177,7 +179,7 @@ export function ResolutionDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(resolution.proposeTime*1000)}
+                  {formatTime(resolution.proposeTime)}
                 </span>
               </div>
               <Separator />

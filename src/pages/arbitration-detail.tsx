@@ -43,6 +43,7 @@ export function ArbitrationDetailPage() {
   const [userVoteResult, setUserVoteResult] = useState<boolean | undefined>(
     undefined
   );
+  console.debug("arb:", arb)
 
   useEffect(() => {
     if (writeError) {
@@ -108,6 +109,8 @@ export function ArbitrationDetailPage() {
     : Math.ceil((totalArbitrators * 2) / 3);
 
   const formatTime = (timestamp: number) => {
+    if (!timestamp) return ''
+    timestamp = Number(timestamp) > 1e12 ? timestamp : timestamp * 1000
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
     return new Date(timestamp).toLocaleString(locale, {
       year: 'numeric',
@@ -185,7 +188,7 @@ export function ArbitrationDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('resolution.proposeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(Number(arb.proposeTime))}
+                  {formatTime(arb.proposeTime)}
                 </span>
               </div>
             </CardContent>
@@ -220,7 +223,7 @@ export function ArbitrationDetailPage() {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('dispute.disputeTime')}</span>
                 <span className="text-sm text-foreground">
-                  {formatTime(Number(arb.disputeTime))}
+                  {formatTime(arb.disputeTime)}
                 </span>
               </div>
             </CardContent>

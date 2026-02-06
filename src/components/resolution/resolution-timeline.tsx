@@ -122,6 +122,7 @@ export function ResolutionTimeline({
 
   const formatTimestamp = (timestamp?: number) => {
     if (!timestamp) return '';
+    timestamp = Number(timestamp) > 1e12 ? timestamp : timestamp * 1000
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
     return new Date(timestamp).toLocaleString(locale, {
       month: 'short',
@@ -142,13 +143,13 @@ export function ResolutionTimeline({
                 className={cn(
                   'flex h-8 w-8 items-center justify-center rounded-full border-2',
                   step.status === 'completed' &&
-                    'border-emerald-500 bg-emerald-500/20 text-emerald-400',
+                  'border-emerald-500 bg-emerald-500/20 text-emerald-400',
                   step.status === 'current' &&
-                    'border-blue-500 bg-blue-500/20 text-blue-400',
+                  'border-blue-500 bg-blue-500/20 text-blue-400',
                   step.status === 'pending' &&
-                    'border-muted-foreground/30 bg-muted/20 text-muted-foreground/50',
+                  'border-muted-foreground/30 bg-muted/20 text-muted-foreground/50',
                   step.status === 'skipped' &&
-                    'border-red-500/50 bg-red-500/10 text-red-400'
+                  'border-red-500/50 bg-red-500/10 text-red-400'
                 )}
               >
                 {getStepIcon(step.status)}

@@ -22,17 +22,19 @@ export function DisputeCard({ arbitration }: DisputeCardProps) {
   if (!arbitration) {
     return null;
   }
-  console.log("arbitration:",arbitration)
+  console.log("arbitration:", arbitration)
 
   let { arbitratorCount: totalArbitrators } = useOOA();
-    if (totalArbitrators === 0) {
-      totalArbitrators = 3;
-    }
+  if (totalArbitrators === 0) {
+    totalArbitrators = 3;
+  }
 
   const votedCount = arbitration.yesVotes + arbitration.noVotes;
   const pendingCount = totalArbitrators - votedCount;
 
   const formatTime = (timestamp: number) => {
+    if (!timestamp) return '';
+    timestamp = Number(timestamp) > 1e12 ? timestamp : timestamp * 1000
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
     return new Date(timestamp).toLocaleString(locale, {
       month: 'short',
@@ -114,7 +116,7 @@ export function DisputeCard({ arbitration }: DisputeCardProps) {
               {t('disputeCard.submitTime')}
             </span>
             <span className="text-foreground">
-              {formatTime(Number(arbitration.disputeTime))}
+              {formatTime(arbitration.disputeTime)}
             </span>
           </div>
         </div>

@@ -56,7 +56,7 @@ export function transformResolution(data: RPCResolution): Resolution {
     proposeTime: Number(data.proposeTime),
     endTime: data.endTime,
     disputeWindowTime: data.disputeWindowTime,
-    challengeDeadline: Number(data.proposeTime) * 1000 + Number(data.disputeWindowTime) * 1000,
+    challengeDeadline: Number(data.proposeTime) + Number(data.disputeWindowTime),
     status: statusMap[data.status] || 'Unresolved',
     bondAmount: data.bondAmount,
   };

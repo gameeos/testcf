@@ -29,14 +29,14 @@
 - 对象：市场最终结果（YES / NO / Option）
 - 时间：市场到期后
 - 是否影响结算：是
-- 是否需要质押：500 U
+- 是否需要质押：200 U
 
 ### 2.2 规则仲裁（Rule Dispute）
 - 对象：市场规则是否合理 / 可判定
 - 时间：结果发生前
 - 是否影响结算：不直接影响
 - 可能结果：市场作废 / 强制关闭
-- 是否需要质押：500 U
+- 是否需要质押：200 U
 
 ---
 
@@ -58,8 +58,8 @@
 
 | 参数 | 默认值 | 说明 |
 |----|----|----|
-| 结果提交 Bond | 500 U | 提交初始结果 |
-| 争议 Bond | 500 U | 提交争议 |
+| 结果提交 Bond | 200 U | 提交初始结果 |
+| 争议 Bond | 200 U | 提交争议 |
 | 挑战窗口 | 3 小时 | 管理员可调 |
 | 仲裁委员阈值 | 3 | 决定投票规则 |
 
@@ -445,7 +445,7 @@ type Vote @entity(immutable: true) {
   - Dispute Type 选择（Outcome / Rule）
   - Reason（必填，争议描述）
   - Reason 存储方式选择（MVP: 中心化存储(不选择), 后期: IPFS）
-- Bond 金额提示（500 U）
+- Bond 金额提示（200 U）
 - 提交按钮：调用 `challenge(disputeId, resolutionId, marketId, disputeType, challengedOutcome, reason)`
 - 显示 Challenge 倒计时
 

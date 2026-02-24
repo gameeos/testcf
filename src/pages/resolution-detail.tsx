@@ -239,7 +239,7 @@ export function ResolutionDetailPage() {
                     />
                   </p>
                   <p className="text-muted-foreground">
-                    {t('resolution.requiredBond')}<span className="text-foreground"> {formatBondAmount(500000000, i18n)}</span>
+                    {t('resolution.requiredBond')}<span className="text-foreground"> {formatBondAmount(200000000, i18n)}</span>
                   </p>
                 </div>
                 <Button asChild>

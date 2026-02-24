@@ -70,7 +70,7 @@ export function ChallengeNewPage() {
 
   // 合约调用
   const { challenge, isWritePending, isWriteError, writeError, transactionHash, challengeBond, challengeBondDecimals, getAllowance, currentAccount, approveBond, outcomeToBytes32 } = useOOA()
-  const bond = challengeBond === undefined || challengeBond === null ? 500 : Number(formatUnits(challengeBond as bigint, challengeBondDecimals))
+  const bond = challengeBond === undefined || challengeBond === null ? 200 : Number(formatUnits(challengeBond as bigint, challengeBondDecimals))
 
   useEffect(() => {
     const genId = async () => {
@@ -481,7 +481,7 @@ export function ChallengeNewPage() {
         </Card>
 
         {/* 押金警告 */}
-        <BondWarning amount={500} />
+        <BondWarning amount={200} />
 
         {/* 操作按钮 */}
         <div className="flex justify-end gap-3">

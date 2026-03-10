@@ -69,7 +69,7 @@ export function ChallengeNewPage() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   // 合约调用
-  const { challenge, isWritePending, isWriteError, writeError, transactionHash, challengeBond, challengeBondDecimals, getAllowance, currentAccount, approveBond, outcomeToBytes32 } = useOOA()
+  const { challenge,  challengeBond, challengeBondDecimals, getAllowance, currentAccount, approveBond, outcomeToBytes32 } = useOOA()
   const bond = challengeBond === undefined || challengeBond === null ? 200 : Number(formatUnits(challengeBond as bigint, challengeBondDecimals))
 
   useEffect(() => {

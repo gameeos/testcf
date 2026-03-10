@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { isArbitrator } from "@/data/mock-data";
+// import { isArbitrator } from "@/data/mock-data";
 import { useTheme } from "@/components/theme-provider";
 import { useWallet } from "@/lib/use-wallet";
 import { useWeb3ModalTheme } from "@/lib/web3-modal";
@@ -26,7 +26,7 @@ export function Header() {
   const { t, i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
   const {
-    address,
+    // address,
     displayAddress,
     isConnected,
     isConnecting,
@@ -40,7 +40,8 @@ export function Header() {
   useWeb3ModalTheme();
 
   // 使用合约调用判断是否为仲裁委员，如果合约地址未配置则回退到 mock 数据
-  const userIsArbitrator = true;  // TODO: isArbitratorFromContract;
+  // const userIsArbitrator = true;
+  const userIsArbitrator = isArbitratorFromContract;
 
   // 搜索功能
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {

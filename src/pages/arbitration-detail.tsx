@@ -33,7 +33,7 @@ export function ArbitrationDetailPage() {
   const { disputeId } = useParams<{ disputeId: string }>();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const { isArbitrator, currentAccount, arbitratorCount, vote, isWritePending, writeError } = useOOA();
+  const { isArbitrator, currentAccount, arbitratorCount, vote, writeError } = useOOA();
   let totalArbitrators = arbitratorCount || 0
 
   const { arbitration } = useArbitration({ disputeId })

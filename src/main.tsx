@@ -11,7 +11,7 @@ import "@/styles/globals.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <RPCProvider url="http://localhost:3000">
+    <RPCProvider url="https://test-ooapi.orbit.show">
       <Web3Provider>
         <ThemeProvider>
           <RouterProvider router={router} />

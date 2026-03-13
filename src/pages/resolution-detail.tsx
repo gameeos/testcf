@@ -136,7 +136,7 @@ export function ResolutionDetailPage() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t('resolution.settlementRules')}</span>
                 </div>
-                <p className="text-foreground">{resolution.market.rules}</p>
+                <p className="text-foreground">{getLocalString(resolution.market.rules, i18n)}</p>
               </div>
               <Separator />
               <div className="space-y-2 text-sm">

@@ -247,7 +247,7 @@ export function ArbitrationDetailPage() {
             <div>
               <span className="text-sm text-muted-foreground">{t('resolution.settlementRules')}</span>
               <p className="mt-1 text-sm text-foreground">
-                {arb.market.rules}
+                {getLocalString(arb.market.rules, i18n)}
               </p>
             </div>
           </CardContent>

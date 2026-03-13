@@ -1,4 +1,5 @@
 import type { Arbitration, ArbitrationVote, Dispute, Resolution, ResolutionStatus } from '@/types';
+import { hexToString } from "viem"
 
 // RPC 返回的数据类型（与后端保持一致）
 export interface RPCResolution {
@@ -16,7 +17,7 @@ export interface RPCResolution {
   };
   dispute?: Dispute;
   arbitration?: Arbitration;
-  proposedOutcome: 'YES' | 'NO';
+  proposedOutcome: 'YES' | 'NO' | '';
   proposer: string;
   proposeTime: number;
   endTime: number;
@@ -51,7 +52,7 @@ export function transformResolution(data: RPCResolution): Resolution {
     },
     dispute: data.dispute ? data.dispute : null,
     arbitration: data.arbitration ? data.arbitration : null,
-    proposedOutcome: data.proposedOutcome,
+    proposedOutcome: hexToString(data.proposedOutcome as `0x${string}`).replace(/\0+$/, ""),
     proposer: data.proposer,
     proposeTime: Number(data.proposeTime),
     endTime: data.endTime,

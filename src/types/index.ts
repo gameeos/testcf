@@ -24,9 +24,9 @@ export interface Resolution {
   hashId: string;
   resolutionId: string;
   marketId: string;
-  marketHashId:string;
+  marketHashId: string;
   market: Market;
-  proposedOutcome: 'YES' | 'NO';
+  proposedOutcome: 'YES' | 'NO' | '';
   proposer: string;
   proposeTime: number;
   endTime: number;
@@ -44,7 +44,7 @@ export interface Dispute {
   resolutionId: string;
   resolutionHashId: string;
   marketId: string;
-  marketHashId:string;
+  marketHashId: string;
   disputeType: DisputeType;
   challengedOutcome: 'YES' | 'NO';
   challenger: string;

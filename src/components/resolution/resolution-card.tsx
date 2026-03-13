@@ -30,16 +30,21 @@ export function ResolutionCard({ resolution }: ResolutionCardProps) {
       <CardHeader className="space-y-2">
         <div className="flex items-start justify-between gap-2">
           <ResolutionStatusBadge status={resolution.status} resolution={resolution} />
-          <Badge
-            variant="outline"
-            className={
-              resolution.proposedOutcome === 'YES'
-                ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
-                : 'border-red-500/50 bg-red-500/10 text-red-400'
-            }
-          >
-            {resolution.proposedOutcome}
-          </Badge>
+          {resolution.proposedOutcome != "" ?
+            (
+              <Badge
+                variant="outline"
+                className={
+                  resolution.proposedOutcome === 'YES'
+                    ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
+                    : 'border-red-500/50 bg-red-500/10 text-red-400'
+                }
+              >
+                {resolution.proposedOutcome}
+              </Badge>
+            )
+            : ""
+          }
         </div>
         <h3 className="line-clamp-2 text-lg font-semibold leading-tight text-foreground">
           {getLocalString(resolution.market.title, i18n)}

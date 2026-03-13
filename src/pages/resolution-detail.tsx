@@ -161,16 +161,20 @@ export function ResolutionDetailPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t('resolution.proposedOutcome')}</span>
-                <Badge
-                  variant="outline"
-                  className={
-                    resolution.proposedOutcome === 'YES'
-                      ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
-                      : 'border-red-500/50 bg-red-500/10 text-red-400'
-                  }
-                >
-                  {resolution.proposedOutcome}
-                </Badge>
+                {resolution.proposedOutcome != "" ?
+                  (
+                    <Badge
+                      variant="outline"
+                      className={
+                        resolution.proposedOutcome === 'YES'
+                          ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-400'
+                          : 'border-red-500/50 bg-red-500/10 text-red-400'
+                      }
+                    >
+                      {resolution.proposedOutcome}
+                    </Badge>
+                  ) : ""
+                }
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t('resolution.proposer')}</span>

@@ -37,7 +37,6 @@ export function ResolutionDetailPage() {
   const { t, i18n } = useTranslation();
 
   const { data: resolution, isLoading, error } = useResolution(id);
-  console.log("resolution:", resolution)
 
   if (isLoading) {
     return (

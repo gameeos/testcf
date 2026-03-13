@@ -41,6 +41,7 @@ import { useResolution } from '@/data/use-resolution';
 import { useOOA } from '@/lib/use-ooa';
 import { useWallet } from '@/lib/use-wallet';
 import { formatUnits } from 'viem';
+import { getLocalString } from '@/lib/utils';
 
 export function ChallengeNewPage() {
   const [searchParams] = useSearchParams();
@@ -69,7 +70,7 @@ export function ChallengeNewPage() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   // 合约调用
-  const { challenge,  challengeBond, challengeBondDecimals, getAllowance, currentAccount, approveBond, outcomeToBytes32 } = useOOA()
+  const { challenge, challengeBond, challengeBondDecimals, getAllowance, currentAccount, approveBond, outcomeToBytes32 } = useOOA()
   const bond = challengeBond === undefined || challengeBond === null ? 200 : Number(formatUnits(challengeBond as bigint, challengeBondDecimals))
 
   useEffect(() => {
@@ -257,7 +258,7 @@ export function ChallengeNewPage() {
           <CardContent className="space-y-4">
             <div>
               <h3 className="font-medium text-foreground">
-                {resolution.market.title}
+                {getLocalString(resolution.market.title, i18n)}
               </h3>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">

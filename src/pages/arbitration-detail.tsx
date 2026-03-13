@@ -28,6 +28,7 @@ import { useOOA } from '@/lib/use-ooa';
 import { useArbitration } from '@/data/use-arbitration';
 import { hasVoted } from '@/data/resolution-utils';
 import { UserRejectedRequestError } from 'viem';
+import { getLocalString } from '@/lib/utils';
 
 export function ArbitrationDetailPage() {
   const { disputeId } = useParams<{ disputeId: string }>();
@@ -237,10 +238,10 @@ export function ArbitrationDetailPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             <h3 className="font-medium text-foreground">
-              {arb.market.title}
+              {getLocalString(arb.market.title, i18n)}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {arb.market.description}
+              {getLocalString(arb.market.description, i18n)}
             </p>
             <Separator />
             <div>

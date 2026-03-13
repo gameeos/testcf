@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { AddressDisplay } from '@/components/shared/address-display';
 import { ArrowRight, Clock, Gavel } from 'lucide-react';
 import { useOOA } from '@/lib/use-ooa';
+import { getLocalString } from '@/lib/utils';
 
 interface DisputeCardProps {
   arbitration: any;
@@ -69,7 +70,7 @@ export function DisputeCard({ arbitration }: DisputeCardProps) {
             <span>Resolution #{arbitration.resolutionId}</span>
           </div>
           <h3 className="line-clamp-2 font-medium leading-tight text-foreground">
-            {arbitration.market.title}
+            {getLocalString(arbitration.market.title, i18n)}
           </h3>
         </div>
       </CardHeader>

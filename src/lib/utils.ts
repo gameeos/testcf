@@ -13,3 +13,26 @@ export const formatBondAmount = (amount: number, i18n: any) => {
     maximumFractionDigits: 2,
   })} USDT`;
 };
+
+export const getLocalString = (txt: string, i18n: any) => {
+  try {
+    const obj = JSON.parse(txt)
+    const keys = Object.keys(obj)
+    if (keys.includes(i18n.language)) {
+      return obj[i18n.language]
+    } else {
+      const defaultLang = i18n.language.startsWith("zh") ? "zh" : "en"
+      let result = obj[defaultLang]
+      if (!result || result === "" || result === null) {
+        for (let key of keys) {
+          result = obj[key]
+          if (result !== "") return result
+        }
+        return ""
+      }
+      return result
+    }
+  } catch {
+    return txt
+  }
+}

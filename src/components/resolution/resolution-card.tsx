@@ -13,13 +13,14 @@ import { CountdownTimer } from './countdown-timer';
 import { AddressDisplay } from '@/components/shared/address-display';
 import type { Resolution } from '@/types';
 import { ArrowRight, Clock } from 'lucide-react';
+import { getLocalString } from '@/lib/utils';
 
 interface ResolutionCardProps {
   resolution: Resolution;
 }
 
 export function ResolutionCard({ resolution }: ResolutionCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isInChallengeWindow =
     resolution.status === 'Proposed' &&
     resolution.challengeDeadline > Date.now();
@@ -41,13 +42,13 @@ export function ResolutionCard({ resolution }: ResolutionCardProps) {
           </Badge>
         </div>
         <h3 className="line-clamp-2 text-lg font-semibold leading-tight text-foreground">
-          {resolution.market.title}
+          {getLocalString(resolution.market.title, i18n)}
         </h3>
       </CardHeader>
 
       <CardContent className="flex-1 space-y-3">
         <p className="line-clamp-2 text-sm text-muted-foreground">
-          {resolution.market.description}
+          {getLocalString(resolution.market.description, i18n)}
         </p>
 
         <div className="space-y-2 text-sm">

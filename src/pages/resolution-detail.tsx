@@ -29,7 +29,7 @@ import {
   // FileIcon,
   Gavel,
 } from 'lucide-react';
-import { formatBondAmount } from '@/lib/utils';
+import { formatBondAmount, getLocalString } from '@/lib/utils';
 
 export function ResolutionDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -71,7 +71,7 @@ export function ResolutionDetailPage() {
     resolution.challengeDeadline > Date.now();
 
   const formatTime = (timestamp: number) => {
-    if(!timestamp)''
+    if (!timestamp) ''
     timestamp = Number(timestamp) > 1e12 ? timestamp : timestamp * 1000
     const locale = i18n.language === 'zh-TW' ? 'zh-TW' : 'en-US';
     return new Date(timestamp).toLocaleString(locale, {
@@ -125,10 +125,10 @@ export function ResolutionDetailPage() {
             <CardContent className="space-y-4">
               <div>
                 <h3 className="font-medium text-foreground">
-                  {resolution.market.title}
+                  {getLocalString(resolution.market.title, i18n)}
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {resolution.market.description}
+                  {getLocalString(resolution.market.description, i18n)}
                 </p>
               </div>
               <Separator />
